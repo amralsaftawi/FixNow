@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/FixNow.Api/FixNow.Api.csproj" />
+    <Project Path="src/FixNow.Application/FixNow.Application.csproj" />
+    <Project Path="src/FixNow.Contracts/FixNow.Contracts.csproj" />
+    <Project Path="src/FixNow.Domain/FixNow.Domain.csproj" />
+    <Project Path="src/FixNow.infrastrucure/FixNow.infrastrucure.csproj" />
+  </Folder>
+</Solution>
