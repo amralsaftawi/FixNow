@@ -1,2 +1,3 @@
+using MediatR;
 
-public class DomainEvent;
+public abstract record DomainEvent : INotification;
