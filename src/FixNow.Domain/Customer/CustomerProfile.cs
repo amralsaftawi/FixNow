@@ -14,10 +14,11 @@ public sealed class CustomerProfile : AuditableEntity
 
     public User User { get; private set; } = null!;
 
+   #pragma warning disable CS8618
     private CustomerProfile()
     {
     }
-
+   #pragma warning disable CS8618
     private CustomerProfile(
         Guid id,
         Guid userId)

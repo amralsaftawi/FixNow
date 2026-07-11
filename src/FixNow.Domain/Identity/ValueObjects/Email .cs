@@ -3,10 +3,11 @@ public sealed class Email : ValueObject
 {
     public string Value { get; }
 
+#pragma warning disable CS8618
     private Email()
     {
     }
-
+#pragma warning disable CS8618
     private Email(string value)
     {
         Value = value;

@@ -11,10 +11,11 @@ public sealed class ServiceCategory : AuditableEntity
 
     public bool IsActive { get; private set; }
 
+#pragma warning disable CS8618
     private ServiceCategory()
     {
     }
-
+#pragma warning disable CS8618
     private ServiceCategory(
         Guid id,
         string name,

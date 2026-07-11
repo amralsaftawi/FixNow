@@ -14,10 +14,11 @@ public sealed class RefreshToken : AuditableEntity
 
     public User User { get; private set; } = null!;
 
+#pragma warning disable CS8618
     private RefreshToken()
     {
     }
-
+#pragma warning disable CS8618
     private RefreshToken(
         Guid id,
         Guid userId,

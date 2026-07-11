@@ -26,9 +26,11 @@ public sealed class UserSession : AuditableEntity
 
     public RefreshToken RefreshToken { get; private set; } = null!;
 
+#pragma warning disable CS8618
     private UserSession()
     {
     }
+    #pragma warning disable CS8618
 
     private UserSession(
         Guid id,

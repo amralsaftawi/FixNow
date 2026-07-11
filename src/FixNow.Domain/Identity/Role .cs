@@ -4,10 +4,11 @@ public sealed class Role : AuditableEntity
 
     public bool IsActive { get; private set; }
 
+#pragma warning disable CS8618
     private Role()
     {
     }
-
+#pragma warning disable CS8618
     private Role(Guid id, string name)
         : base(id)
     {

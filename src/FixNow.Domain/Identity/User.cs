@@ -27,10 +27,11 @@ public sealed class User : AuditableEntity
 
     public DateTimeOffset? DeletedAt { get; private set; }
 
+#pragma warning disable CS8618
     private User()
     {
     }
-
+#pragma warning disable CS8618
     private User(
         Guid id,
         string firstName,

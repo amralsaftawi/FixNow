@@ -4,10 +4,11 @@ public sealed class CountryCode : ValueObject
 {
     public string Value { get; }
 
+#pragma warning disable CS8618
     private CountryCode()
     {
     }
-
+#pragma warning disable CS8618
     private CountryCode(string value)
     {
         Value = value;

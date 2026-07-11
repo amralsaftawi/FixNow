@@ -30,10 +30,11 @@ public sealed class Address : AuditableEntity
 
     public CustomerProfile CustomerProfile { get; private set; } = null!;
 
+#pragma warning disable CS8618
     private Address()
     {
     }
-
+#pragma warning disable CS8618
     private Address(
         Guid id,
         Guid customerProfileId,

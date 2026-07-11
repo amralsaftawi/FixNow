@@ -4,10 +4,11 @@ public sealed class PhoneNumber : ValueObject
 {
     public string Value { get; }
 
+#pragma warning disable CS8618
     private PhoneNumber()
     {
     }
-
+#pragma warning disable CS8618
     private PhoneNumber(string value)
     {
         Value = value;

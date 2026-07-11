@@ -18,10 +18,11 @@ public sealed class OTPRecord : AuditableEntity
 
     public User User { get; private set; } = null!;
 
+#pragma warning disable CS8618
     private OTPRecord()
     {
     }
-
+#pragma warning disable CS8618
     private OTPRecord(
         Guid id,
         Guid userId,

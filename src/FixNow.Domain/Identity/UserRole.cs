@@ -18,11 +18,11 @@ public sealed class UserRole:AuditableEntity
     public Role Role { get; private set; } = null!;
 
 
-
+#pragma warning disable CS8618
     private UserRole()
     {
     }
-
+#pragma warning disable CS8618
 
     private UserRole(  Guid id,  Guid userId,  Guid roleId,Guid? assignedByUserId): base(id)
     {
