@@ -4,38 +4,58 @@ public sealed class ServiceRequestTimeline : AuditableEntity
 
     public ServiceRequestStatus Status { get; private set; }
 
-    public string Message { get; private set; }
+    public string Description { get; private set; }
 
-    public DateTimeOffset CreatedAt { get; private set; }
-#pragma warning disable CS8618
+    public DateTimeOffset OccurredOn { get; private set; }
+
+    // Navigation
+
+    public ServiceRequest ServiceRequest { get; private set; } = null!;
+
     private ServiceRequestTimeline()
     {
     }
-#pragma warning disable CS8618
+
     private ServiceRequestTimeline(
         Guid id,
         Guid serviceRequestId,
         ServiceRequestStatus status,
-        string message)
+        string description)
         : base(id)
     {
         ServiceRequestId = serviceRequestId;
+
         Status = status;
-        Message = message;
-        CreatedAt = DateTimeOffset.UtcNow;
+
+        Description = description;
+
+        OccurredOn = DateTimeOffset.UtcNow;
     }
 
     public static Result<ServiceRequestTimeline> Create(
         Guid id,
         Guid serviceRequestId,
         ServiceRequestStatus status,
-        string message)
+        string description)
     {
-       
+        if (id == Guid.Empty)
+            return ServiceRequestTimelineErrors.IdRequired;
+
+        if (serviceRequestId == Guid.Empty)
+            return ServiceRequestTimelineErrors.ServiceRequestIdRequired;
+
+        if (string.IsNullOrWhiteSpace(description))
+            return ServiceRequestTimelineErrors.DescriptionRequired;
+
+        description = description.Trim();
+
+        if (description.Length > 500)
+            return ServiceRequestTimelineErrors.DescriptionTooLong;
+
         return new ServiceRequestTimeline(
             id,
             serviceRequestId,
             status,
-            message);
+            description);
     }
 }

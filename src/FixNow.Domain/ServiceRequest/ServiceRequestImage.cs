@@ -1,16 +1,20 @@
 public sealed class ServiceRequestImage : AuditableEntity
 {
-     public Guid ServiceRequestId { get; private set; }
+    public Guid ServiceRequestId { get; private set; }
 
     public string ImageKey { get; private set; }
 
-    public DateTimeOffset UploadedAt { get; private set; }
+    // Navigation
+
+    public ServiceRequest ServiceRequest { get; private set; } = null!;
 
 #pragma warning disable CS8618
+
     private ServiceRequestImage()
     {
     }
 #pragma warning disable CS8618
+
     private ServiceRequestImage(
         Guid id,
         Guid serviceRequestId,
@@ -19,7 +23,6 @@ public sealed class ServiceRequestImage : AuditableEntity
     {
         ServiceRequestId = serviceRequestId;
         ImageKey = imageKey;
-        UploadedAt = DateTimeOffset.UtcNow;
     }
 
     public static Result<ServiceRequestImage> Create(
@@ -27,7 +30,16 @@ public sealed class ServiceRequestImage : AuditableEntity
         Guid serviceRequestId,
         string imageKey)
     {
-       
+        if (id == Guid.Empty)
+            return ServiceRequestImageErrors.IdRequired;
+
+        if (serviceRequestId == Guid.Empty)
+            return ServiceRequestImageErrors.ServiceRequestIdRequired;
+
+        if (string.IsNullOrWhiteSpace(imageKey))
+            return ServiceRequestImageErrors.ImageKeyRequired;
+
+        imageKey = imageKey.Trim();
 
         return new ServiceRequestImage(
             id,
