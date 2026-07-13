@@ -2,7 +2,7 @@ public sealed class RefreshToken : AuditableEntity
 {
     public Guid UserId { get; private set; }
 
-    public string Token { get; private set; }
+    public string RefreshTokenHash { get; private set; }
 
     public DateTimeOffset ExpiresAt { get; private set; }
 
@@ -27,7 +27,7 @@ public sealed class RefreshToken : AuditableEntity
         : base(id)
     {
         UserId = userId;
-        Token = token;
+        RefreshTokenHash = token;
         ExpiresAt = expiresAt;
         IsRevoked = false;
     }
