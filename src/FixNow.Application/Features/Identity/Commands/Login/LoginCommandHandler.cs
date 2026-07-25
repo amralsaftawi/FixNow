@@ -1,4 +1,3 @@
-
 using FixNow.Application.Common.Abstractions.Messaging;
 using FixNow.Application.Common.Interfaces.Persistence.Repositories;
 using FixNow.Domain.Common.Errors;
@@ -19,35 +18,40 @@ public sealed class LoginCommandHandler(
         LoginCommand command,
         CancellationToken cancellationToken)
     {
-        var user = command.Login.Contains('@')
-            ? await LoginByEmailAsync(command.Login, cancellationToken)
-            : await LoginByPhoneNumberAsync(command.Login, cancellationToken);
+        var loginInfo = command.Login.Contains('@')
+            ? await LoginByEmailAsync(
+                command.Login,
+                cancellationToken)
+            : await LoginByPhoneNumberAsync(
+                command.Login,
+                cancellationToken);
 
-        if (user is null)
+        if (loginInfo is null)
         {
             return IdentityErrors.InvalidCredentials;
         }
 
         if (!_passwordHasher.Verify(
                 command.Password,
-                user.PasswordHash.Value))
+                loginInfo.User.PasswordHash.Value))
         {
             return IdentityErrors.InvalidCredentials;
         }
 
-       var tokenUserInfo = new TokenUserInfo(
-    UserId: user.Id,
-    Email: user.Email.Value,
-    Roles: user.Roles.Select(r => r.Name).ToList());
+        var tokenUserInfo = new TokenUserInfo(
+            UserId: loginInfo.User.Id,
+            Email: loginInfo.User.Email.Value,
+            Roles: loginInfo.Roles);
 
-var accessTokenResult = await _tokenProvider.GenerateAsync(
-    tokenUserInfo,
-    cancellationToken);
+        var accessTokenResult = await _tokenProvider.GenerateAsync(
+            tokenUserInfo,
+            cancellationToken);
 
-return user.ToLoginResponse(accessTokenResult);
+        return loginInfo.User.ToLoginResponse(
+            accessTokenResult);
     }
 
-    private async Task<User?> LoginByEmailAsync(
+    private async Task<UserLoginInfo?> LoginByEmailAsync(
         string login,
         CancellationToken cancellationToken)
     {
@@ -58,24 +62,24 @@ return user.ToLoginResponse(accessTokenResult);
             return null;
         }
 
-        return await _userRepository.GetByEmailAsync(
+        return await _userRepository.GetLoginInfoByEmailAsync(
             emailResult.Value,
             cancellationToken);
     }
 
-    private async Task<User?> LoginByPhoneNumberAsync(
+    private async Task<UserLoginInfo?> LoginByPhoneNumberAsync(
         string login,
         CancellationToken cancellationToken)
     {
-        var phoneResult = PhoneNumber.Create(login);
+        var phoneNumberResult = PhoneNumber.Create(login);
 
-        if (phoneResult.IsError)
+        if (phoneNumberResult.IsError)
         {
             return null;
         }
 
-        return await _userRepository.GetByPhoneNumberAsync(
-            phoneResult.Value,
+        return await _userRepository.GetLoginInfoByPhoneNumberAsync(
+            phoneNumberResult.Value,
             cancellationToken);
     }
 }

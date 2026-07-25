@@ -1,0 +1,11 @@
+using FixNow.Application.Common.Abstractions.Messaging;
+
+namespace FixNow.Application.Features.ServiceCategories.Commands.UpdateServiceCategory;
+
+public sealed record UpdateServiceCategoryCommand(
+    Guid ServiceCategoryId,
+    string Name,
+    string Description,
+    string IconKey,
+    int DisplayOrder)
+    : ICommand<Result<Updated>>;
