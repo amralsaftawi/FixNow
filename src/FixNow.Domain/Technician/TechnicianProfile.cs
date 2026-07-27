@@ -226,4 +226,19 @@ public Result<Success> RemoveService(Guid serviceId)
 
     return Result.Success;
 }
+
+
+public Result<Success> UpdateYearsOfExperience(
+    int yearsOfExperience)
+{
+    if (yearsOfExperience < 0)
+        return TechnicianProfileErrors.InvalidYearsOfExperience;
+
+    if (YearsOfExperience == yearsOfExperience)
+        return TechnicianProfileErrors.SameYearsOfExperience;
+
+    YearsOfExperience = yearsOfExperience;
+
+    return Result.Success;
+}
 }

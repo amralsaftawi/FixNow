@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using FixNow.Application.Features.ServiceCategories.Dtos;
 
 namespace FixNow.Application.Features.ServiceCategories.Queries.GetServiceCategories;
@@ -21,6 +24,6 @@ public static class GetServiceCategoriesMapping
     public static List<ServiceCategoryDto> ToDtos(
         this IEnumerable<ServiceCategory> entities)
     {
-        return [.. entities.Select(ToDto)];
+        return entities.Select(ToDto).ToList();
     }
 }

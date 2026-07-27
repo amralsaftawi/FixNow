@@ -45,7 +45,11 @@ public static class TechnicianProfileErrors
         Error.Conflict(
             "TechnicianProfile.SameBio",
             "The new bio is the same as the current bio.");
-
+    
+    public static readonly Error SameYearsOfExperience =
+        Error.Conflict(
+            "TechnicianProfile.SameYearsOfExperience",
+            "The new Same Years Of Experience is the same as the current .");
     public static readonly Error SameAvailability =
         Error.Conflict(
             "TechnicianProfile.SameAvailability",
