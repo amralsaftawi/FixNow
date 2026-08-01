@@ -2,6 +2,7 @@ using MediatR;
 
 
 using FixNow.Application.Common.Models;
+using FixNow.Application.Common.Abstractions.Messaging;
 
 namespace FixNow.Application.Common.Behaviors;
 
