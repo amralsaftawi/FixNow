@@ -6,19 +6,19 @@ public sealed class LoginCommandValidator : AbstractValidator<LoginCommand>
 {
     public LoginCommandValidator()
     {
-        ValidateLogin();
+        ValidateIdentifier();
 
         ValidatePassword();
     }
 
-    private void ValidateLogin()
+    private void ValidateIdentifier()
     {
-        RuleFor(x => x.Login)
+        RuleFor(x => x.Identifier)
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
-            .WithErrorCode("Identity.Login.Required")
+            .WithErrorCode("Identity.Identifier.Required")
             .MaximumLength(256)
-            .WithErrorCode("Identity.Login.TooLong");
+            .WithErrorCode("Identity.Identifier.TooLong");
     }
 
     private void ValidatePassword()
@@ -27,8 +27,6 @@ public sealed class LoginCommandValidator : AbstractValidator<LoginCommand>
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
             .WithErrorCode("Identity.Password.Required")
-            .MinimumLength(8)
-            .WithErrorCode("Identity.Password.TooShort")
             .MaximumLength(100)
             .WithErrorCode("Identity.Password.TooLong");
     }

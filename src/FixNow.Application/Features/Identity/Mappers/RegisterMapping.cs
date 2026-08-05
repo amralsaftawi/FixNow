@@ -1,5 +1,3 @@
-
-
 using FixNow.Application.Features.Identity.Commands.Register;
 
 public static class RegisterMapping
@@ -10,6 +8,6 @@ public static class RegisterMapping
 
         return new RegisterResponse(
             UserId: entity.Id,
-            Email: entity.Email.Value);
+            Message: "Registration completed successfully.");
     }
 }

@@ -26,4 +26,24 @@ public static class IdentityErrors
         Error.Forbidden(
             code: "Identity.EmailNotVerified",
             description: "Email address has not been verified.");
+
+public static readonly Error AccountNotActive =
+    Error.Forbidden(
+        "Identity.AccountNotActive",
+        "Your account is not active.");
+
+        public static readonly Error InvalidRefreshToken =
+    Error.Unauthorized(
+        "Identity.InvalidRefreshToken",
+        "The refresh token is invalid.");
+
+public static readonly Error RefreshTokenRevoked =
+    Error.Unauthorized(
+        "Identity.RefreshTokenRevoked",
+        "The refresh token has already been revoked.");
+
+public static readonly Error RefreshTokenExpired =
+    Error.Unauthorized(
+        "Identity.RefreshTokenExpired",
+        "The refresh token has expired.");
 }

@@ -100,6 +100,9 @@ public sealed class User : AuditableEntity
     if (lastName.Length > 100)
         return UserErrors.LastNameTooLong;
 
+    if (!Enum.IsDefined(preferredLanguage))
+        return UserErrors.InvalidPreferredLanguage;
+
     var user = new User(
         id,
         firstName,

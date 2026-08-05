@@ -17,6 +17,7 @@ public sealed class OTPRecordConfiguration : IEntityTypeConfiguration<OTPRecord>
             .HasConversion<int>();
         builder.Property(x => x.ExpiresAt).IsRequired();
         builder.Property(x => x.VerifiedAt);
+        builder.Property(x => x.InvalidatedAt);
         builder.Property(x => x.AttemptsCount).IsRequired();
         builder.Property(x => x.MaxAttempts).IsRequired();
 

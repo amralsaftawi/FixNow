@@ -1,0 +1,84 @@
+@baseUrl = http://localhost:5223
+
+###########################################################
+### 1) Register (موجود بالفعل - سيبه زي ما هو)
+###########################################################
+
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "firstName": "Amr",
+  "lastName": "Ahmed",
+  "email": "Amr.Ahmed@example.com",
+  "phoneNumber": "+201201531814",
+  "password": "P@ssw0rd1234",
+  "confirmPassword": "P@ssw0rd1234",
+  "countryCode": "EG",
+  "preferredLanguage": 2
+}
+
+###########################################################
+### 2) Login
+###########################################################
+
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "identifier": "Amr.Alsaftawi@example.com",
+  "password": "23216648"
+}
+
+###########################################################
+### بعد نجاح Login
+### انسخ الـ RefreshToken وحطه هنا
+###########################################################
+
+@refreshToken =cx+kM1Zz0tgAzIXKaAxAQEOnQED7qSho4taCdOAOOvSRY0nyFzdTtfKHmpn7t/GkGdp2FQnV68rPnBEIqNPp8Q==
+
+###########################################################
+### 3) Refresh Token
+###########################################################
+
+POST {{baseUrl}}/api/auth/refresh-token
+Content-Type: application/json
+Accept: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+###########################################################
+### بعد نجاح Refresh
+### انسخ الـ RefreshToken الجديد
+### لأن القديم أصبح Revoked
+###########################################################
+
+@newRefreshToken = PUT_NEW_REFRESH_TOKEN_HERE
+
+###########################################################
+### 4) Logout
+###########################################################
+
+POST {{baseUrl}}/api/auth/logout
+Content-Type: application/json
+Accept: application/json
+
+{
+  "refreshToken": "{{newRefreshToken}}"
+}
+
+###########################################################
+### 5) تأكد إن الـ RefreshToken اتلغى
+###########################################################
+
+POST {{baseUrl}}/api/auth/refresh-token
+Content-Type: application/json
+Accept: application/json
+
+{
+  "refreshToken": "{{newRefreshToken}}"
+}

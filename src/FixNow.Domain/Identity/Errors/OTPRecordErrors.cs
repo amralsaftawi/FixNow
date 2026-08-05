@@ -15,6 +15,11 @@ public static class OTPRecordErrors
             "OTPRecord.CodeHashRequired",
             "OTP code hash is required.");
 
+    public static readonly Error InvalidPurpose =
+        Error.Validation(
+            "OTPRecord.InvalidPurpose",
+            "OTP purpose is invalid.");
+
     public static readonly Error InvalidExpirationDate =
         Error.Validation(
             "OTPRecord.InvalidExpirationDate",
@@ -29,6 +34,11 @@ public static class OTPRecordErrors
         Error.Conflict(
             "OTPRecord.AlreadyVerified",
             "This OTP has already been verified.");
+
+    public static readonly Error AlreadyInvalidated =
+        Error.Conflict(
+            "OTPRecord.AlreadyInvalidated",
+            "This OTP has already been invalidated.");
 
     public static readonly Error Expired =
         Error.Conflict(

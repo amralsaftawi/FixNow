@@ -17,6 +17,10 @@ public sealed class RegisterCommandValidator : AbstractValidator<RegisterCommand
         ValidatePassword();
 
         ValidateConfirmPassword();
+
+        ValidateCountryCode();
+
+        ValidatePreferredLanguage();
     }
 
     private void ValidateFirstName()
@@ -43,11 +47,11 @@ public sealed class RegisterCommandValidator : AbstractValidator<RegisterCommand
     {
         RuleFor(x => x.Email)
             .Cascade(CascadeMode.Stop)
-            .NotEmpty()
-            .WithErrorCode("Identity.Email.Required")
             .EmailAddress()
+            .When(x => !string.IsNullOrWhiteSpace(x.Email))
             .WithErrorCode("Identity.Email.Invalid")
-            .MaximumLength(256)
+            .MaximumLength(320)
+            .When(x => !string.IsNullOrWhiteSpace(x.Email))
             .WithErrorCode("Identity.Email.TooLong");
     }
 
@@ -81,5 +85,22 @@ public sealed class RegisterCommandValidator : AbstractValidator<RegisterCommand
             .WithErrorCode("Identity.ConfirmPassword.Required")
             .Equal(x => x.Password)
             .WithErrorCode("Identity.Password.NotMatched");
+    }
+
+    private void ValidateCountryCode()
+    {
+        RuleFor(x => x.CountryCode)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty()
+            .WithErrorCode("Identity.CountryCode.Required")
+            .Length(2)
+            .WithErrorCode("Identity.CountryCode.Invalid");
+    }
+
+    private void ValidatePreferredLanguage()
+    {
+        RuleFor(x => x.PreferredLanguage)
+            .IsInEnum()
+            .WithErrorCode("Identity.PreferredLanguage.Invalid");
     }
 }

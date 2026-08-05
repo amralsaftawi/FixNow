@@ -1,4 +1,3 @@
 public sealed record AccessTokenResult(
-    string AccessToken,
-    string RefreshToken,
-    DateTime ExpiresAt);
+    string Token,
+    DateTimeOffset ExpiresAt);

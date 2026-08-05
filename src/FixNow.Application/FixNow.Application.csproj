@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FixNow.Domain\FixNow.Domain.csproj" />
+    <ProjectReference Include="..\FixNow.Contracts\FixNow.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

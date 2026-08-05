@@ -20,6 +20,9 @@ public static class UserErrors
     public static readonly Error LastNameTooLong =
         Error.Validation("User.LastNameTooLong", "Last name must not exceed 100 characters.");
 
+    public static readonly Error InvalidPreferredLanguage =
+        Error.Validation("User.InvalidPreferredLanguage", "Preferred language is invalid.");
+
     // =========================
     // Email / Phone Verification
     // =========================

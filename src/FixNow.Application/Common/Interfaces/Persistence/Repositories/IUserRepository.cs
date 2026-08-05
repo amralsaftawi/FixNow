@@ -16,11 +16,11 @@ public interface IUserRepository
         CancellationToken cancellationToken = default);
 
     Task<bool> ExistsByEmailAsync(
-        string email,
+        Email email,
         CancellationToken cancellationToken = default);
 
     Task<bool> ExistsByPhoneNumberAsync(
-        string phoneNumber,
+        PhoneNumber phoneNumber,
         CancellationToken cancellationToken = default);
 
     Task AddAsync(

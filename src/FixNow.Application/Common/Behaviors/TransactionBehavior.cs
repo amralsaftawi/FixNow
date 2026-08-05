@@ -29,8 +29,6 @@ public sealed class TransactionBehavior<TRequest, TResponse>
         {
             var response = await next();
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
             await _unitOfWork.CommitTransactionAsync(cancellationToken);
 
             return response;

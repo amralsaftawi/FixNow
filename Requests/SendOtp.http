@@ -1,0 +1,41 @@
+@baseUrl = http://localhost:5223
+
+### Successful email OTP request
+POST {{baseUrl}}/api/auth/send-otp
+Content-Type: application/json
+
+{
+  "identifier": "amr.ahmed@example.com"
+}
+
+### Unknown email returns the same generic success response
+POST {{baseUrl}}/api/auth/send-otp
+Content-Type: application/json
+
+{
+  "identifier": "unknown@example.com"
+}
+
+### Unknown phone returns the same generic success response
+POST {{baseUrl}}/api/auth/send-otp
+Content-Type: application/json
+
+{
+  "identifier": "+201234567890"
+}
+
+### Invalid email returns validation errors
+POST {{baseUrl}}/api/auth/send-otp
+Content-Type: application/json
+
+{
+  "identifier": "invalid@example"
+}
+
+### Invalid phone returns validation errors
+POST {{baseUrl}}/api/auth/send-otp
+Content-Type: application/json
+
+{
+  "identifier": "+20123abc"
+}

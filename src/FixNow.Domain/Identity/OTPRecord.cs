@@ -10,6 +10,8 @@ public sealed class OTPRecord : AuditableEntity
 
     public DateTimeOffset? VerifiedAt { get; private set; }
 
+    public DateTimeOffset? InvalidatedAt { get; private set; }
+
     public int AttemptsCount { get; private set; }
 
     public int MaxAttempts { get; private set; }
@@ -56,6 +58,9 @@ public sealed class OTPRecord : AuditableEntity
 
         if (string.IsNullOrWhiteSpace(codeHash))
             return OTPRecordErrors.CodeHashRequired;
+
+        if (!Enum.IsDefined(purpose))
+            return OTPRecordErrors.InvalidPurpose;
 
         if (expiresAt <= DateTimeOffset.UtcNow)
             return OTPRecordErrors.InvalidExpirationDate;
@@ -118,17 +123,34 @@ public sealed class OTPRecord : AuditableEntity
         return Result.Success;
     }
 
+    public Result<Success> Invalidate()
+    {
+        if (IsVerified)
+            return OTPRecordErrors.AlreadyVerified;
+
+        if (IsInvalidated)
+            return OTPRecordErrors.AlreadyInvalidated;
+
+        InvalidatedAt = DateTimeOffset.UtcNow;
+
+        return Result.Success;
+    }
+
     public bool IsExpired =>
         DateTimeOffset.UtcNow > ExpiresAt;
 
     public bool IsVerified =>
         VerifiedAt.HasValue;
 
+    public bool IsInvalidated =>
+        InvalidatedAt.HasValue;
+
     public bool IsLocked =>
         AttemptsCount >= MaxAttempts;
 
     public bool CanRetry =>
         !IsVerified &&
+        !IsInvalidated &&
         !IsExpired &&
         !IsLocked;
 }

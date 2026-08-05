@@ -228,6 +228,9 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.Property<DateTimeOffset>("ExpiresAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTimeOffset?>("InvalidatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("text");
 

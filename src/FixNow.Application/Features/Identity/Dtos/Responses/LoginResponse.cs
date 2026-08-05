@@ -1,6 +1,7 @@
+namespace FixNow.Application.Features.Identity.Commands.Login;
 
 public sealed record LoginResponse(
-    Guid UserId,
     string AccessToken,
+    DateTimeOffset AccessTokenExpiresAt,
     string RefreshToken,
-    DateTime ExpiresAt);
+    DateTimeOffset RefreshTokenExpiresAt);
