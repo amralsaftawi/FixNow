@@ -20,11 +20,33 @@ public sealed class OtpRepository(AppDbContext dbContext) : IOtpRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<OTPRecord?> GetLatestAsync(
+        Guid userId,
+        OtpPurpose purpose,
+        CancellationToken cancellationToken)
+    {
+        return await dbContext.OTPRecords
+            .Where(otpRecord =>
+                otpRecord.UserId == userId &&
+                otpRecord.Purpose == purpose)
+            .OrderByDescending(otpRecord => otpRecord.CreatedAtUtc)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task AddAsync(
         OTPRecord otpRecord,
         CancellationToken cancellationToken)
     {
         await dbContext.OTPRecords.AddAsync(otpRecord, cancellationToken);
+    }
+
+    public Task UpdateAsync(
+        OTPRecord otpRecord,
+        CancellationToken cancellationToken)
+    {
+        dbContext.OTPRecords.Update(otpRecord);
+
+        return Task.CompletedTask;
     }
 
     public Task UpdateRangeAsync(

@@ -1,0 +1,51 @@
+@baseUrl = http://localhost:5223
+
+### Successful Email OTP Verification Request
+POST {{baseUrl}}/api/auth/verify-otp
+Content-Type: application/json
+
+{
+  "identifier": "amr@example.com",
+  "otp": "482913",
+  "purpose": "EmailVerification"
+}
+
+### Successful Phone OTP Verification Request
+POST {{baseUrl}}/api/auth/verify-otp
+Content-Type: application/json
+
+{
+  "identifier": "+201234567890",
+  "otp": "482913",
+  "purpose": "PhoneVerification"
+}
+
+### Unknown User returns Generic Success Response
+POST {{baseUrl}}/api/auth/verify-otp
+Content-Type: application/json
+
+{
+  "identifier": "unknown@example.com",
+  "otp": "482913",
+  "purpose": "EmailVerification"
+}
+
+### Invalid OTP Format (e.g. less than 6 digits) returns Validation Error
+POST {{baseUrl}}/api/auth/verify-otp
+Content-Type: application/json
+
+{
+  "identifier": "amr@example.com",
+  "otp": "123",
+  "purpose": "EmailVerification"
+}
+
+### Missing Purpose returns Validation Error
+POST {{baseUrl}}/api/auth/verify-otp
+Content-Type: application/json
+
+{
+  "identifier": "amr@example.com",
+  "otp": "482913",
+  "purpose": ""
+}

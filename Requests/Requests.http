@@ -37,7 +37,7 @@ Accept: application/json
 ### انسخ الـ RefreshToken وحطه هنا
 ###########################################################
 
-@refreshToken =cx+kM1Zz0tgAzIXKaAxAQEOnQED7qSho4taCdOAOOvSRY0nyFzdTtfKHmpn7t/GkGdp2FQnV68rPnBEIqNPp8Q==
+@refreshToken =UxIT6vWUknyika7Spv/VYfs6eBbyOWJs4OlMUZ00EtD51F8cy3smGWkTidiV1QMJYS0atqULdia0QqiB2cC+gw==
 
 ###########################################################
 ### 3) Refresh Token
@@ -57,7 +57,7 @@ Accept: application/json
 ### لأن القديم أصبح Revoked
 ###########################################################
 
-@newRefreshToken = PUT_NEW_REFRESH_TOKEN_HERE
+@newRefreshToken = 37IDaE66VXvR1MovGR41geRSEITba7TigqsaF9UygY5DNeoQVtu3PudKK++QuN/YJs+vFRqPNMoJJC9x4s4eMQ==
 
 ###########################################################
 ### 4) Logout

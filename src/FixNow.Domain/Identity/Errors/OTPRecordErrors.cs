@@ -49,4 +49,19 @@ public static class OTPRecordErrors
         Error.Conflict(
             "OTPRecord.MaxAttemptsExceeded",
             "Maximum verification attempts have been exceeded.");
+
+    public static readonly Error InvalidOtp =
+        Error.Validation(
+            "OTPRecord.InvalidOtp",
+            "The OTP provided is invalid.");
+
+    public static readonly Error OtpExpired =
+        Error.Conflict(
+            "OTPRecord.OtpExpired",
+            "The OTP has expired.");
+
+    public static readonly Error OtpAlreadyUsed =
+        Error.Conflict(
+            "OTPRecord.OtpAlreadyUsed",
+            "The OTP has already been used.");
 }

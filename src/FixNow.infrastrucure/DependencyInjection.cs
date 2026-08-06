@@ -6,6 +6,7 @@ using FixNow.Infrastructure.Persistence.Repositories.User;
 using FixNow.Infrastructure.Persistence.Repositories.Otp;
 using FixNow.Infrastructure.Services;
 using FixNow.Infrastructure.UnitOfWork;
+using FixNow.Application.Features.Identity.Commands.VerifyOtp.Processors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -46,6 +47,9 @@ public static class DependencyInjection
         services.AddScoped<ISmsOtpSender, SmsOtpSender>();
 
         services.AddScoped<ITokenService, TokenService>();
+
+        services.AddScoped<IOtpPurposeProcessor, EmailVerificationProcessor>();
+        services.AddScoped<IOtpPurposeProcessor, PhoneVerificationProcessor>();
 
         return services;
     }

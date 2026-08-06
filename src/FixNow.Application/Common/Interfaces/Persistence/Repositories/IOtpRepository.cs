@@ -7,7 +7,16 @@ public interface IOtpRepository
         OtpPurpose purpose,
         CancellationToken cancellationToken);
 
+    Task<OTPRecord?> GetLatestAsync(
+        Guid userId,
+        OtpPurpose purpose,
+        CancellationToken cancellationToken);
+
     Task AddAsync(
+        OTPRecord otpRecord,
+        CancellationToken cancellationToken);
+
+    Task UpdateAsync(
         OTPRecord otpRecord,
         CancellationToken cancellationToken);
 

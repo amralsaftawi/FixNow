@@ -9,6 +9,8 @@ using FixNow.Contracts.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
+using FixNow.Application.Features.Identity.Commands.VerifyOtp;
+
 namespace FixNow.Api.Controllers.Authentication;
 
 [Route("api/auth")]
@@ -80,6 +82,18 @@ public async Task<IActionResult> Logout([FromBody] LogoutRequest request, Cancel
 public async Task<IActionResult> SendOtp([FromBody] SendOtpRequest request, CancellationToken cancellationToken)
 {
     var command = new SendOtpCommand(request.Identifier);
+
+    var result = await sender.Send(command, cancellationToken);
+
+    return result.Match(response => Ok(response.ToContractResponse()), Problem);
+}
+
+[HttpPost("verify-otp")]
+[ProducesResponseType(typeof(FixNow.Contracts.Responses.VerifyOtpResponse), StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status400BadRequest)]
+public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequest request, CancellationToken cancellationToken)
+{
+    var command = new VerifyOtpCommand(request.Identifier, request.Otp, request.Purpose);
 
     var result = await sender.Send(command, cancellationToken);
 
