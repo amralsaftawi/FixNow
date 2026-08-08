@@ -16,6 +16,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     public DbSet<ServiceCategory> ServiceCategories => Set<ServiceCategory>();
 
+    public DbSet<Country> Countries => Set<Country>();
+    public DbSet<City> Cities => Set<City>();
+    public DbSet<Area> Areas => Set<Area>();
+
     public DbSet<TechnicianProfile> TechnicianProfiles => Set<TechnicianProfile>();
     public DbSet<TechnicianService> TechnicianServices => Set<TechnicianService>();
 

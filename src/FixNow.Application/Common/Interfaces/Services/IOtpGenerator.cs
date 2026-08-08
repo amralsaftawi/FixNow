@@ -1,4 +1,4 @@
 public interface IOtpGenerator
 {
-    string Generate();
+   Result<OtpResult>Generate();
 }

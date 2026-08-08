@@ -17,6 +17,11 @@ public static class IdentityErrors
             code: "Identity.InvalidCredentials",
             description: "Invalid email or password.");
 
+    public static readonly Error IncorrectPassword =
+        Error.Unauthorized(
+            code: "Identity.IncorrectPassword",
+            description: "The current password is incorrect.");
+
     public static readonly Error InvalidToken =
         Error.Unauthorized(
             code: "Identity.InvalidToken",
@@ -46,4 +51,14 @@ public static readonly Error RefreshTokenExpired =
     Error.Unauthorized(
         "Identity.RefreshTokenExpired",
         "The refresh token has expired.");
+
+        public static readonly Error Unauthorized =
+    Error.Unauthorized(
+        "Identity.Unauthorized",
+        "You must be authenticated to access the current user.");
+
+        public static readonly Error InvalidResetPasswordRequest =
+    Error.Unauthorized(
+        "Identity.InvalidResetPasswordRequest",
+        "The password reset request is invalid.");
 }

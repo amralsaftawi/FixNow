@@ -5,6 +5,12 @@ public sealed class CustomerProfile : AuditableEntity
 
     public DateTimeOffset RegisteredAt { get; private set; }
 
+    public decimal? CurrentLatitude { get; private set; }
+
+    public decimal? CurrentLongitude { get; private set; }
+
+    public DateTimeOffset? CurrentLocationUpdatedAtUtc { get; private set; }
+
     private readonly List<Address> _addresses = [];
 
     public IReadOnlyCollection<Address> Addresses =>
@@ -103,6 +109,29 @@ public sealed class CustomerProfile : AuditableEntity
             new CustomerDefaultAddressChangedDomainEvent(
                 Id,
                 addressId));
+
+        return Result.Success;
+    }
+
+    public Result<Success> UpdateCurrentLocation(
+        decimal latitude,
+        decimal longitude)
+    {
+        if (latitude < -90m || latitude > 90m)
+            return CustomerProfileErrors.LatitudeInvalid;
+
+        if (longitude < -180m || longitude > 180m)
+            return CustomerProfileErrors.LongitudeInvalid;
+
+        CurrentLatitude = latitude;
+        CurrentLongitude = longitude;
+        CurrentLocationUpdatedAtUtc = DateTimeOffset.UtcNow;
+
+        AddDomainEvent(
+            new CustomerCurrentLocationUpdatedDomainEvent(
+                Id,
+                latitude,
+                longitude));
 
         return Result.Success;
     }

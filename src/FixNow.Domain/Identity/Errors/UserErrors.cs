@@ -34,6 +34,22 @@ public static class UserErrors
         Error.Conflict("User.PhoneAlreadyVerified", "Phone number is already verified.");
 
     // =========================
+    // Profile Updates
+    // =========================
+
+    public static readonly Error SameName =
+        Error.Conflict("User.SameName", "New name must be different from the current name.");
+
+    public static readonly Error SameEmail =
+        Error.Conflict("User.SameEmail", "New email must be different from the current email.");
+
+    public static readonly Error SamePhoneNumber =
+        Error.Conflict("User.SamePhoneNumber", "New phone number must be different from the current phone number.");
+
+    public static readonly Error SameCountryCode =
+        Error.Conflict("User.SameCountryCode", "New country code must be different from the current country code.");
+
+    // =========================
     // Password
     // =========================
 

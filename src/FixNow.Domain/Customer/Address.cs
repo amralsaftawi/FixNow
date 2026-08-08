@@ -110,6 +110,12 @@ public sealed class Address : AuditableEntity
         if (string.IsNullOrWhiteSpace(fullAddress))
             return AddressErrors.FullAddressRequired;
 
+        if (latitude < -90m || latitude > 90m)
+            return AddressErrors.LatitudeInvalid;
+
+        if (longitude < -180m || longitude > 180m)
+            return AddressErrors.LongitudeInvalid;
+
         var address = new Address(
             id,
             customerProfileId,
@@ -167,6 +173,12 @@ public sealed class Address : AuditableEntity
 
         if (string.IsNullOrWhiteSpace(fullAddress))
             return AddressErrors.FullAddressRequired;
+
+        if (latitude < -90m || latitude > 90m)
+            return AddressErrors.LatitudeInvalid;
+
+        if (longitude < -180m || longitude > 180m)
+            return AddressErrors.LongitudeInvalid;
 
         Label = label.Trim();
         CountryId = countryId;

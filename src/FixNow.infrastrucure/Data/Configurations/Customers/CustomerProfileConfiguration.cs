@@ -11,6 +11,14 @@ public sealed class CustomerProfileConfiguration : IEntityTypeConfiguration<Cust
         builder.Property(x => x.UserId).IsRequired();
         builder.Property(x => x.RegisteredAt).IsRequired();
 
+        builder.Property(x => x.CurrentLatitude)
+            .HasPrecision(9, 6);
+
+        builder.Property(x => x.CurrentLongitude)
+            .HasPrecision(9, 6);
+
+        builder.Property(x => x.CurrentLocationUpdatedAtUtc);
+
         builder.Property(x => x.CreatedAtUtc)
             .HasDefaultValueSql("CURRENT_TIMESTAMP");
 

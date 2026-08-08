@@ -181,6 +181,68 @@ public sealed class User : AuditableEntity
         return Result.Success;
     }
 
+    public Result<Success> ChangeName(string firstName, string lastName)
+    {
+        if (string.IsNullOrWhiteSpace(firstName))
+            return UserErrors.FirstNameRequired;
+
+        if (string.IsNullOrWhiteSpace(lastName))
+            return UserErrors.LastNameRequired;
+
+        firstName = firstName.Trim();
+
+        lastName = lastName.Trim();
+
+        if (firstName.Length > 100)
+            return UserErrors.FirstNameTooLong;
+
+        if (lastName.Length > 100)
+            return UserErrors.LastNameTooLong;
+
+        if (FirstName == firstName && LastName == lastName)
+            return UserErrors.SameName;
+
+        FirstName = firstName;
+
+        LastName = lastName;
+
+        return Result.Success;
+    }
+
+    public Result<Success> ChangeEmail(Email? newEmail)
+    {
+        if (Email == newEmail)
+            return UserErrors.SameEmail;
+
+        Email = newEmail;
+
+        IsEmailVerified = false;
+
+        return Result.Success;
+    }
+
+    public Result<Success> ChangePhoneNumber(PhoneNumber newPhoneNumber)
+    {
+        if (PhoneNumber == newPhoneNumber)
+            return UserErrors.SamePhoneNumber;
+
+        PhoneNumber = newPhoneNumber;
+
+        IsPhoneNumberVerified = false;
+
+        return Result.Success;
+    }
+
+    public Result<Success> ChangeCountryCode(CountryCode newCountryCode)
+    {
+        if (CountryCode == newCountryCode)
+            return UserErrors.SameCountryCode;
+
+        CountryCode = newCountryCode;
+
+        return Result.Success;
+    }
+
     public Result<Success> Activate()
     {
         if (AccountStatus == AccountStatus.Active)

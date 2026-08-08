@@ -109,6 +109,31 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.ToTable("Addresses", (string)null);
                 });
 
+            modelBuilder.Entity("Area", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(true)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CityId")
+                        .HasDatabaseName("IX_Areas_CityId");
+
+                    b.ToTable("Areas", (string)null);
+                });
+
             modelBuilder.Entity("Assignment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -165,6 +190,54 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.ToTable("Assignments", (string)null);
                 });
 
+            modelBuilder.Entity("City", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CountryId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(true)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CountryId")
+                        .HasDatabaseName("IX_Cities_CountryId");
+
+                    b.ToTable("Cities", (string)null);
+                });
+
+            modelBuilder.Entity("Country", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(true)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Countries_Name");
+
+                    b.ToTable("Countries", (string)null);
+                });
+
             modelBuilder.Entity("CustomerProfile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -178,6 +251,17 @@ namespace FixNow.infrastrucure.Data.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
+
+                    b.Property<decimal?>("CurrentLatitude")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("numeric(9,6)");
+
+                    b.Property<DateTimeOffset?>("CurrentLocationUpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal?>("CurrentLongitude")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("numeric(9,6)");
 
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("text");
@@ -977,6 +1061,17 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.Navigation("CustomerProfile");
                 });
 
+            modelBuilder.Entity("Area", b =>
+                {
+                    b.HasOne("City", "City")
+                        .WithMany("Areas")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("City");
+                });
+
             modelBuilder.Entity("Assignment", b =>
                 {
                     b.HasOne("ServiceRequest", "ServiceRequest")
@@ -994,6 +1089,17 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.Navigation("ServiceRequest");
 
                     b.Navigation("TechnicianProfile");
+                });
+
+            modelBuilder.Entity("City", b =>
+                {
+                    b.HasOne("Country", "Country")
+                        .WithMany("Cities")
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Country");
                 });
 
             modelBuilder.Entity("CustomerProfile", b =>
@@ -1339,6 +1445,16 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.Navigation("RefreshToken");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("City", b =>
+                {
+                    b.Navigation("Areas");
+                });
+
+            modelBuilder.Entity("Country", b =>
+                {
+                    b.Navigation("Cities");
                 });
 
             modelBuilder.Entity("CustomerProfile", b =>

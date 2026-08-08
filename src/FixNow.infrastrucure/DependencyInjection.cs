@@ -4,6 +4,8 @@ using FixNow.Infrastructure.Persistence.Repositories.ServiceCategory;
 using FixNow.Infrastructure.Persistence.Repositories.Technician;
 using FixNow.Infrastructure.Persistence.Repositories.User;
 using FixNow.Infrastructure.Persistence.Repositories.Otp;
+using FixNow.Infrastructure.Persistence.Repositories.Customer;
+using FixNow.Infrastructure.Persistence.Repositories.Geographic;
 using FixNow.Infrastructure.Services;
 using FixNow.Infrastructure.UnitOfWork;
 using FixNow.Application.Features.Identity.Commands.VerifyOtp.Processors;
@@ -11,6 +13,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using FixNow.Application.Common.Interfaces.Authentication;
+using FixNow.Infrastructure.Services.Otp;
 
 namespace FixNow.Infrastructure;
 
@@ -31,6 +35,10 @@ public static class DependencyInjection
         services.AddScoped<IServiceCategoryRepository, ServiceCategoryRepository>();
         services.AddScoped<ITechnicianProfileRepository, TechnicianProfileRepository>();
         services.AddScoped<ITechnicianDiscoveryRepository, TechnicianDiscoveryRepository>();
+        services.AddScoped<ICustomerRepository, CustomerRepository>();
+        services.AddScoped<ICountryRepository, CountryRepository>();
+        services.AddScoped<ICityRepository, CityRepository>();
+        services.AddScoped<IAreaRepository, AreaRepository>();
         services.AddScoped<global::IUnitOfWork, global::FixNow.Infrastructure.UnitOfWork.UnitOfWork>();
 
         services.AddHttpContextAccessor();
@@ -50,6 +58,8 @@ public static class DependencyInjection
 
         services.AddScoped<IOtpPurposeProcessor, EmailVerificationProcessor>();
         services.AddScoped<IOtpPurposeProcessor, PhoneVerificationProcessor>();
+        services.AddScoped<IOtpSender, OtpSender>();
+
 
         return services;
     }

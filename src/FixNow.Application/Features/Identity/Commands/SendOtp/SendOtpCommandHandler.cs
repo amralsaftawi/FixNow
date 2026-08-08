@@ -40,14 +40,22 @@ public sealed class SendOtpCommandHandler(
 
         await otpRepository.UpdateRangeAsync(existingOtpRecords, cancellationToken);
 
-        var otp = otpGenerator.Generate();
-        var createOtpResult = OTPRecord.Create(
-            Guid.NewGuid(),
-            recipient.User.Id,
-            otpHasher.Hash(otp),
-            recipient.Purpose,
-            DateTimeOffset.UtcNow.Add(Expiration),
-            MaxAttempts);
+    var otpResult = otpGenerator.Generate();
+
+if (otpResult.IsError)
+{
+    return otpResult.Errors;
+}
+
+   var otp = otpResult.Value;
+
+   var createOtpResult = OTPRecord.Create(
+    Guid.NewGuid(),
+    recipient.User.Id,
+    otpHasher.Hash(otp.Code),
+    recipient.Purpose,
+    otp.ExpiresAt,
+    MaxAttempts);
 
         if (createOtpResult.IsError)
             return createOtpResult.Errors;
@@ -55,8 +63,8 @@ public sealed class SendOtpCommandHandler(
         await otpRepository.AddAsync(createOtpResult.Value, cancellationToken);
 
         var sendResult = recipient.Purpose == OtpPurpose.EmailVerification
-            ? await emailOtpSender.SendAsync(recipient.Destination, otp, cancellationToken)
-            : await smsOtpSender.SendAsync(recipient.Destination, otp, cancellationToken);
+            ? await emailOtpSender.SendAsync(recipient.Destination, otp.Code, cancellationToken)
+            : await smsOtpSender.SendAsync(recipient.Destination, otp.Code, cancellationToken);
 
         if (sendResult.IsError)
             return sendResult.Errors;
