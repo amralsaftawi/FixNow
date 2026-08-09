@@ -4,48 +4,29 @@ namespace FixNow.Contracts.Requests;
 
 public sealed record RegisterRequest
 {
-    [Required(
-        ErrorMessage = "First name is required.")]
-    [MaxLength(
-        100,
-        ErrorMessage = "First name cannot exceed 100 characters.")]
+    [Required(ErrorMessage = "First name is required.")]
+    [MaxLength(100,ErrorMessage = "First name cannot exceed 100 characters.")]
     public string FirstName { get; init; } = string.Empty;
 
-    [Required(
-        ErrorMessage = "Last name is required.")]
-    [MaxLength(
-        100,
-        ErrorMessage = "Last name cannot exceed 100 characters.")]
+    [Required(ErrorMessage = "Last name is required.")]
+    [MaxLength(100,ErrorMessage = "Last name cannot exceed 100 characters.")]
     public string LastName { get; init; } = string.Empty;
 
-    [EmailAddress(
-        ErrorMessage = "Invalid email address.")]
-    [MaxLength(
-        320,
-        ErrorMessage = "Email cannot exceed 256 characters.")]
+    [EmailAddress(ErrorMessage = "Invalid email address.")]
+    [MaxLength(320,ErrorMessage = "Email cannot exceed 256 characters.")]
     public string? Email { get; init; }
 
-    [Required(
-        ErrorMessage = "Phone number is required.")]
-    [Phone(
-        ErrorMessage = "Invalid phone number.")]
+    [Required(ErrorMessage = "Phone number is required.")]
+    [Phone(ErrorMessage = "Invalid phone number.")]
     public string PhoneNumber { get; init; } = string.Empty;
 
-    [Required(
-        ErrorMessage = "Password is required.")]
-    [MinLength(
-        8,
-        ErrorMessage = "Password must be at least 8 characters.")]
-    [MaxLength(
-        100,
-        ErrorMessage = "Password cannot exceed 100 characters.")]
+    [Required(ErrorMessage = "Password is required.")]
+    [MinLength(8,ErrorMessage = "Password must be at least 8 characters.")]
+    [MaxLength(100,ErrorMessage = "Password cannot exceed 100 characters.")]
     public string Password { get; init; } = string.Empty;
 
-    [Required(
-        ErrorMessage = "Password confirmation is required.")]
-    [Compare(
-        nameof(Password),
-        ErrorMessage = "Passwords do not match.")]
+    [Required(ErrorMessage = "Password confirmation is required.")]
+    [Compare(nameof(Password),ErrorMessage = "Passwords do not match.")]
     public string ConfirmPassword { get; init; } = string.Empty;
 
   [Required]

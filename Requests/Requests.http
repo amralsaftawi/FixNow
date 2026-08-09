@@ -1,84 +1,281 @@
-@baseUrl = http://localhost:5223
 
-###########################################################
-### 1) Register (موجود بالفعل - سيبه زي ما هو)
-###########################################################
+@host = http://localhost:5223
+@baseUrl = {{host}}/api/auth
 
-POST {{baseUrl}}/api/auth/register
+###############################################################################
+# FIXNOW - LOGIN ENDPOINT TEST SUITE
+#
+# Flow:
+# 1. Register a new user
+# 2. Try Login before OTP verification
+# 3. Test valid credentials after account activation
+# 4. Test invalid credentials
+# 5. Test invalid inputs
+#
+# Expected status codes:
+# 201 Created  -> Registration succeeded
+# 200 OK       -> Login succeeded
+# 400 Bad Request -> Validation failure
+# 401 Unauthorized -> Invalid credentials / unauthorized access
+# 403 Forbidden -> Account is not active (depending on your Problem mapping)
+#
+# IMPORTANT:
+# The registered account starts as PendingVerification.
+# Therefore Login immediately after Register is EXPECTED to fail
+# until the OTP verification flow activates the account.
+###############################################################################
+
+
+###############################################################################
+# 01 - REGISTER USER FOR LOGIN TESTS
+#
+# Expected: 201 Created
+#
+# This creates the account that will be used in the login tests.
+###############################################################################
+
+POST {{baseUrl}}/register
 Content-Type: application/json
-Accept: application/json
 
 {
-  "firstName": "Amr",
+  "firstName": "Mohmed",
   "lastName": "Ahmed",
-  "email": "Amr.Ahmed@example.com",
-  "phoneNumber": "+201201531814",
-  "password": "P@ssw0rd1234",
-  "confirmPassword": "P@ssw0rd1234",
+  "email": "Mohmed.login.test@outlook.com",
+  "phoneNumber": "+2011201531814",
+  "password": "StrongPassword123!",
+  "confirmPassword": "StrongPassword123!",
   "countryCode": "EG",
-  "preferredLanguage": 2
+  "preferredLanguage": "English"
 }
 
-###########################################################
-### 2) Login
-###########################################################
 
-POST {{baseUrl}}/api/auth/login
+
+###############################################################################
+# SEND OTP - TEST SCRIPT
+#
+# Feature:
+#   Send OTP
+#
+# Supported identifiers:
+#   - Email
+#   - Phone Number
+#
+# Security:
+#   Existing / non-existing / invalid identifiers should not be distinguishable
+#   through the API response.
+###############################################################################
+
+
+###############################################################################
+# 01 - SEND OTP TO EXISTING EMAIL
+#
+# Expected: 200 OK
+# Expected: Generic success response.
+# Expected: OTP is generated and persisted as a HASH.
+# Expected: OTP is sent through EmailOtpSender.
+###############################################################################
+
+POST {{baseUrl}}/otp/send
 Content-Type: application/json
-Accept: application/json
 
 {
-  "identifier": "Amr.Alsaftawi@example.com",
-  "password": "23216648"
+  "identifier": "+201201531814"
 }
 
-###########################################################
-### بعد نجاح Login
-### انسخ الـ RefreshToken وحطه هنا
-###########################################################
 
-@refreshToken =UxIT6vWUknyika7Spv/VYfs6eBbyOWJs4OlMUZ00EtD51F8cy3smGWkTidiV1QMJYS0atqULdia0QqiB2cC+gw==
+###############################################################################
+# 02 - SEND OTP TO EXISTING PHONE
+#
+# Expected: 200 OK
+# Expected: Generic success response.
+# Expected: OTP is generated and persisted as a HASH.
+# Expected: OTP is sent through SmsOtpSender.
+###############################################################################
 
-###########################################################
-### 3) Refresh Token
-###########################################################
-
-POST {{baseUrl}}/api/auth/refresh-token
+POST {{baseUrl}}/auth/send-otp
 Content-Type: application/json
-Accept: application/json
 
 {
-  "refreshToken": "{{refreshToken}}"
+  "identifier": "+201012345678"
 }
 
-###########################################################
-### بعد نجاح Refresh
-### انسخ الـ RefreshToken الجديد
-### لأن القديم أصبح Revoked
-###########################################################
 
-@newRefreshToken = 37IDaE66VXvR1MovGR41geRSEITba7TigqsaF9UygY5DNeoQVtu3PudKK++QuN/YJs+vFRqPNMoJJC9x4s4eMQ==
+###############################################################################
+# 03 - SEND OTP TO NON-EXISTING EMAIL
+#
+# Expected: Same success response as an existing account.
+#
+# This verifies account-enumeration protection.
+###############################################################################
 
-###########################################################
-### 4) Logout
-###########################################################
-
-POST {{baseUrl}}/api/auth/logout
+POST {{baseUrl}}/auth/send-otp
 Content-Type: application/json
-Accept: application/json
 
 {
-  "refreshToken": "{{newRefreshToken}}"
+  "identifier": "nonexistent.user.987654@example.com"
 }
 
-###########################################################
-### 5) تأكد إن الـ RefreshToken اتلغى
-###########################################################
 
-POST {{baseUrl}}/api/auth/refresh-token
+###############################################################################
+# 04 - SEND OTP TO NON-EXISTING PHONE
+#
+# Expected: Same success response as an existing account.
+#
+# This verifies account-enumeration protection for phone numbers.
+###############################################################################
+
+POST {{baseUrl}}/auth/send-otp
 Content-Type: application/json
-Accept: application/json
 
 {
-  "refreshToken": "{{newRefreshToken}}"
+  "identifier": "+201099999999"
 }
+
+
+###############################################################################
+# 05 - INVALID IDENTIFIER
+#
+# Expected: Generic success response.
+#
+# The identifier is neither a valid Email nor a valid PhoneNumber.
+# The handler must NOT access phoneNumberResult.Value when Result has an error.
+###############################################################################
+
+POST {{baseUrl}}/auth/send-otp
+Content-Type: application/json
+
+{
+  "identifier": "not-a-valid-email-or-phone"
+}
+
+
+###############################################################################
+# 06 - EMPTY IDENTIFIER
+#
+# Expected: Validation response according to SendOtpCommandValidator.
+# Expected status: 400 Bad Request if the existing validator rejects empty input.
+###############################################################################
+
+POST {{baseUrl}}/auth/send-otp
+Content-Type: application/json
+
+{
+  "identifier": ""
+}
+
+
+###############################################################################
+# 07 - WHITESPACE IDENTIFIER
+#
+# Expected: Validation response according to the existing validator.
+###############################################################################
+
+POST {{baseUrl}}/auth/send-otp
+Content-Type: application/json
+
+{
+  "identifier": "   "
+}
+
+
+###############################################################################
+# 08 - MISSING IDENTIFIER
+#
+# Expected: Validation response according to the existing request/validator
+# configuration.
+###############################################################################
+
+POST {{baseUrl}}/auth/send-otp
+Content-Type: application/json
+
+{
+}
+
+
+###############################################################################
+# 09 - NULL IDENTIFIER
+#
+# Expected: Validation response according to the existing validator/model
+# binding behavior.
+###############################################################################
+
+POST {{baseUrl}}/auth/send-otp
+Content-Type: application/json
+
+{
+  "identifier": null
+}
+
+
+###############################################################################
+# 10 - INVALID PHONE FORMAT
+#
+# Expected: Generic success response if the request passes command validation.
+# Expected: No exception.
+# Expected: No access to PhoneNumber Result.Value when creation fails.
+###############################################################################
+
+POST {{baseUrl}}/auth/send-otp
+Content-Type: application/json
+
+{
+  "identifier": "+201234"
+}
+
+
+###############################################################################
+# 11 - INVALID EMAIL FORMAT
+#
+# Expected: Generic success response if the request passes command validation.
+# The handler should safely fall back to phone parsing, then return null.
+###############################################################################
+
+POST {{baseUrl}}/auth/send-otp
+Content-Type: application/json
+
+{
+  "identifier": "invalid-email"
+}
+
+
+###############################################################################
+# 12 - REQUEST OTP AGAIN FOR SAME EMAIL
+#
+# Expected: 200 OK
+# Expected:
+#   1. Existing active OTP is invalidated.
+#   2. A new OTP is generated.
+#   3. New OTP is persisted.
+#   4. New OTP is sent.
+#
+# Run this request twice to verify OTP invalidation behavior.
+###############################################################################
+
+POST {{baseUrl}}/auth/send-otp
+Content-Type: application/json
+
+{
+  "identifier": "amr.otp.test@example.com"
+}
+
+
+###############################################################################
+# 13 - REQUEST OTP AGAIN FOR SAME PHONE
+#
+# Expected: 200 OK
+# Expected:
+#   1. Existing active phone OTP is invalidated.
+#   2. New OTP is generated.
+#   3. New OTP is persisted.
+#   4. New OTP is sent.
+#
+# Run this request twice to verify OTP invalidation behavior.
+###############################################################################
+
+POST {{baseUrl}}/auth/send-otp
+Content-Type: application/json
+
+{
+  "identifier": "+201012345678"
+}
+

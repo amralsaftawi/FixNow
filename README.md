@@ -214,10 +214,10 @@ sequenceDiagram
 
     rect rgb(30,25,15)
     Note over User,DB: OTP Verification
-    User->>API: POST /send-otp
+    User->>API: POST /otp/send
     API->>AuthHandler: SendOtpCommand
     AuthHandler-->>User: OTP delivered
-    User->>API: POST /verify-otp
+    User->>API: POST /otp/verify
     API->>AuthHandler: VerifyOtpCommand
     AuthHandler->>DB: Mark account as verified
     end
@@ -233,7 +233,7 @@ sequenceDiagram
 
     rect rgb(15,20,30)
     Note over User,DB: Token Refresh
-    User->>API: POST /refresh-token
+    User->>API: POST /refresh
     API->>AuthHandler: RefreshTokenCommand
     AuthHandler->>DB: Validate & rotate refresh token
     DB-->>AuthHandler: New token pair
@@ -329,9 +329,16 @@ Separating these into distinct projects means the dependency rules are enforced 
 |---|---|---|---|
 | `POST` | `/api/auth/register` | Register a new user | ❌ |
 | `POST` | `/api/auth/login` | Authenticate and receive tokens | ❌ |
-| `POST` | `/api/auth/refresh-token` | Rotate access/refresh tokens | ❌ |
-| `POST` | `/api/auth/send-otp` | Send a one-time password | ❌ |
-| `POST` | `/api/auth/verify-otp` | Verify a one-time password | ❌ |
+| `POST` | `/api/auth/refresh` | Rotate access/refresh tokens | ❌ |
+| `POST` | `/api/auth/otp/send` | Send a one-time password | ❌ |
+| `POST` | `/api/auth/otp/verify` | Verify a one-time password | ❌ |
+| `POST` | `/api/auth/otp/resend` | Resend a one-time password | ❌ |
+| `POST` | `/api/auth/password/forgot` | Request a password reset | ❌ |
+| `POST` | `/api/auth/password/reset` | Reset password with OTP | ❌ |
+| `GET` | `/api/users/me` | Get the current user's profile | ✅ |
+| `PUT` | `/api/users/me` | Update the current user's profile | ✅ |
+| `POST` | `/api/users/me/password` | Change the current user's password | ✅ |
+| `POST` | `/api/users/me/deactivate` | Deactivate the current user's account | ✅ |
 | `GET` | `/api/technicians` | Discover technicians | ✅ |
 | `GET` | `/api/technicians/{id}` | Get technician details | ✅ |
 | `GET` | `/api/service-categories` | List service categories | ✅ |

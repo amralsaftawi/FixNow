@@ -9,7 +9,7 @@ public sealed class EmailOtpSender(ILogger<EmailOtpSender> logger) : IEmailOtpSe
         string otp,
         CancellationToken cancellationToken)
     {
-        logger.LogInformation("OTP {Otp} sent to email {Email}.", otp, email);
+        logger.LogInformation("OTP requested for email {Email}.", email);
 
         return Task.FromResult<Result<Success>>(Result.Success);
     }

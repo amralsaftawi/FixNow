@@ -20,6 +20,16 @@ public sealed class ServiceCategoryConfiguration : IEntityTypeConfiguration<Serv
             .HasMaxLength(255)
             .IsUnicode(false);
         builder.Property(x => x.DisplayOrder).IsRequired();
+        builder.OwnsOne(x => x.Price, owned =>
+        {
+            owned.Property(m => m.Value)
+                .HasColumnName("Price")
+                .HasPrecision(12, 2);
+
+            owned.Property(m => m.Currency)
+                .HasColumnName("PriceCurrency")
+                .HasConversion<int>();
+        });
         builder.Property(x => x.IsActive)
             .HasDefaultValue(true);
 

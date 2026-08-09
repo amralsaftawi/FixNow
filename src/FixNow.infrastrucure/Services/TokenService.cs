@@ -15,7 +15,7 @@ public sealed class TokenService : ITokenService
         _configuration = configuration;
     }
 
-    public Result<AccessTokenResult> GenerateAccessToken(User user)
+    public Result<AccessTokenResult> GenerateAccessToken(User user, List<Role> roles)
     {
         var secret = _configuration["Jwt:SecretKey"]!;
         var issuer = _configuration["Jwt:Issuer"]!;
@@ -43,6 +43,13 @@ public sealed class TokenService : ITokenService
         claims.Add(new Claim(
             ClaimTypes.MobilePhone,
             user.PhoneNumber.Value));
+
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim(
+                ClaimTypes.Role,
+                role.Name));
+        }
 
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(secret));

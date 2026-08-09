@@ -1,7 +1,7 @@
 @baseUrl = http://localhost:5223
 
 ### Successful email OTP request
-POST {{baseUrl}}/api/auth/send-otp
+POST {{baseUrl}}/api/auth/otp/send
 Content-Type: application/json
 
 {
@@ -9,7 +9,7 @@ Content-Type: application/json
 }
 
 ### Unknown email returns the same generic success response
-POST {{baseUrl}}/api/auth/send-otp
+POST {{baseUrl}}/api/auth/otp/send
 Content-Type: application/json
 
 {
@@ -17,7 +17,7 @@ Content-Type: application/json
 }
 
 ### Unknown phone returns the same generic success response
-POST {{baseUrl}}/api/auth/send-otp
+POST {{baseUrl}}/api/auth/otp/send
 Content-Type: application/json
 
 {
@@ -25,7 +25,7 @@ Content-Type: application/json
 }
 
 ### Invalid email returns validation errors
-POST {{baseUrl}}/api/auth/send-otp
+POST {{baseUrl}}/api/auth/otp/send
 Content-Type: application/json
 
 {
@@ -33,7 +33,7 @@ Content-Type: application/json
 }
 
 ### Invalid phone returns validation errors
-POST {{baseUrl}}/api/auth/send-otp
+POST {{baseUrl}}/api/auth/otp/send
 Content-Type: application/json
 
 {

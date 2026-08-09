@@ -1,7 +1,7 @@
 @baseUrl = http://localhost:5223
 
 ### Successful Email OTP Verification Request
-POST {{baseUrl}}/api/auth/verify-otp
+POST {{baseUrl}}/api/auth/otp/verify
 Content-Type: application/json
 
 {
@@ -11,7 +11,7 @@ Content-Type: application/json
 }
 
 ### Successful Phone OTP Verification Request
-POST {{baseUrl}}/api/auth/verify-otp
+POST {{baseUrl}}/api/auth/otp/verify
 Content-Type: application/json
 
 {
@@ -21,7 +21,7 @@ Content-Type: application/json
 }
 
 ### Unknown User returns Generic Success Response
-POST {{baseUrl}}/api/auth/verify-otp
+POST {{baseUrl}}/api/auth/otp/verify
 Content-Type: application/json
 
 {
@@ -31,7 +31,7 @@ Content-Type: application/json
 }
 
 ### Invalid OTP Format (e.g. less than 6 digits) returns Validation Error
-POST {{baseUrl}}/api/auth/verify-otp
+POST {{baseUrl}}/api/auth/otp/verify
 Content-Type: application/json
 
 {
@@ -41,7 +41,7 @@ Content-Type: application/json
 }
 
 ### Missing Purpose returns Validation Error
-POST {{baseUrl}}/api/auth/verify-otp
+POST {{baseUrl}}/api/auth/otp/verify
 Content-Type: application/json
 
 {

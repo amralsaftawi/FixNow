@@ -14,12 +14,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using FixNow.Application.Common.Interfaces.Authentication;
+using FixNow.Application.Common.Interfaces.Storage;
 using FixNow.Infrastructure.Services.Otp;
+using FixNow.Infrastructure.Storage;
+using Microsoft.Extensions.Options;
 
 namespace FixNow.Infrastructure;
 
 public static class DependencyInjection
 {
+    private static readonly TimeSpan HttpRequestTimeout =
+        TimeSpan.FromSeconds(15);
+
     public static IServiceCollection AddInfrastructure(this IServiceCollection services,IConfiguration configuration)
     {
         var connectionString =configuration.GetConnectionString("DefaultConnection");
@@ -52,9 +58,10 @@ public static class DependencyInjection
         services.AddSingleton<IOtpGenerator, OtpGenerator>();
         services.AddSingleton<IOtpHasher, OtpHasher>();
         services.AddScoped<IEmailOtpSender, EmailOtpSender>();
-        services.AddScoped<ISmsOtpSender, SmsOtpSender>();
 
         services.AddScoped<ITokenService, TokenService>();
+
+        services.AddScoped<IFileStorage, LocalFileStorage>();
 
         services.AddScoped<IOtpPurposeProcessor, EmailVerificationProcessor>();
         services.AddScoped<IOtpPurposeProcessor, PhoneVerificationProcessor>();

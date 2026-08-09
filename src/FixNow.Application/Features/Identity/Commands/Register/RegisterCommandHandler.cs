@@ -4,17 +4,13 @@ using FixNow.Domain.Common.Errors;
 
 namespace FixNow.Application.Features.Identity.Commands.Register;
 
-public sealed class RegisterCommandHandler(
-    IUserRepository userRepository,
-    IPasswordHasher passwordHasher)
+public sealed class RegisterCommandHandler(IUserRepository userRepository,IPasswordHasher passwordHasher)
     : ICommandHandler<RegisterCommand, Result<RegisterResponse>>
 {
     private readonly IUserRepository _userRepository = userRepository;
     private readonly IPasswordHasher _passwordHasher = passwordHasher;
 
-    public async Task<Result<RegisterResponse>> Handle(
-        RegisterCommand command,
-        CancellationToken cancellationToken)
+    public async Task<Result<RegisterResponse>> Handle( RegisterCommand command, CancellationToken cancellationToken)
     {
         // 1. Create Email Value Object
         Email? email = null;
@@ -46,16 +42,13 @@ public sealed class RegisterCommandHandler(
         var countryCode = countryCodeResult.Value;
 
         // 4. Check Email uniqueness
-        if (email is not null &&
-            await _userRepository.ExistsByEmailAsync(email, cancellationToken))
+        if (email is not null && await _userRepository.ExistsByEmailAsync(email, cancellationToken))
         {
             return IdentityErrors.EmailAlreadyExists;
         }
 
         // 5. Check Phone uniqueness
-        if (await _userRepository.ExistsByPhoneNumberAsync(
-                phoneNumber,
-                cancellationToken))
+        if (await _userRepository.ExistsByPhoneNumberAsync(phoneNumber,cancellationToken))
         {
             return IdentityErrors.PhoneNumberAlreadyExists;
         }
@@ -86,9 +79,7 @@ public sealed class RegisterCommandHandler(
         var user = createUserResult.Value;
 
         // 8. Persist User
-        await _userRepository.AddAsync(
-            user,
-            cancellationToken);
+        await _userRepository.AddAsync( user, cancellationToken);
 
         // 9. Return Response
         return user.ToRegisterResponse();

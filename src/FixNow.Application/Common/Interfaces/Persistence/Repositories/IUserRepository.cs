@@ -23,6 +23,10 @@ public interface IUserRepository
         PhoneNumber phoneNumber,
         CancellationToken cancellationToken = default);
 
+    Task<List<Role>> GetRolesByUserIdAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default);
+
     Task AddAsync(
         User user,
         CancellationToken cancellationToken = default);

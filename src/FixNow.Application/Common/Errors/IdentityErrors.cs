@@ -32,10 +32,10 @@ public static class IdentityErrors
             code: "Identity.EmailNotVerified",
             description: "Email address has not been verified.");
 
-public static readonly Error AccountNotActive =
+public static readonly Error AccountNotVerified =
     Error.Forbidden(
-        "Identity.AccountNotActive",
-        "Your account is not active.");
+        "IdentityErrors.AccountNotVerified",
+        "Your account is not Verified.");
 
         public static readonly Error InvalidRefreshToken =
     Error.Unauthorized(

@@ -4,6 +4,7 @@ public sealed record GetServiceCategoryByIdResponse(
     Guid ServiceCategoryId,
     string Name,
     string Description,
-    string IconKey,
+    string? IconKey,
     int DisplayOrder,
+    Money? Price,
     bool IsActive);

@@ -21,7 +21,7 @@ public sealed class GetServiceCategoryByIdQueryHandler(
             query.ServiceCategoryId,
             cancellationToken);
 
-        if (serviceCategory is null)
+        if (serviceCategory is null || !serviceCategory.IsActive)
         {
             return ServiceCategoryErrors.NotFound;
         }

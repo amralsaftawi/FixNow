@@ -47,6 +47,15 @@ public sealed class UserRepository (AppDbContext dbContext): IUserRepository
             .FirstOrDefaultAsync(user => user.PhoneNumber.Value == phoneNumber, cancellationToken);
     }
 
+    public Task<List<Role>> GetRolesByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        return _dbContext.UserRoles
+            .AsNoTracking()
+            .Where(userRole => userRole.UserId == userId)
+            .Select(userRole => userRole.Role)
+            .ToListAsync(cancellationToken);
+    }
+
     public void Remove(global::User user)
     {
         _dbContext.Users.Remove(user);

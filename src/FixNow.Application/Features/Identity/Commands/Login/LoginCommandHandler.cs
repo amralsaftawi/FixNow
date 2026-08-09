@@ -16,14 +16,10 @@ public sealed class LoginCommandHandler(
     private readonly ITokenService _tokenService = tokenService;
     private readonly IRefreshTokenService _refreshTokenService = refreshTokenService;
 
-    public async Task<Result<LoginResponse>> Handle(
-        LoginCommand command,
-        CancellationToken cancellationToken)
+    public async Task<Result<LoginResponse>> Handle(LoginCommand command,CancellationToken cancellationToken)
     {
         // 1. Find user by email or phone number
-        var userResult = await FindUserAsync(
-            command.Identifier,
-            cancellationToken);
+        var userResult = await FindUserAsync(command.Identifier,cancellationToken);
 
         if (userResult.IsError)
         {
@@ -35,21 +31,22 @@ public sealed class LoginCommandHandler(
         // 2. Check account status
         if (user.AccountStatus != AccountStatus.Active)
         {
-            return IdentityErrors.AccountNotActive;
+            return IdentityErrors.AccountNotVerified;
         }
 
         // 3. Verify password
-        var isPasswordValid = _passwordHasher.Verify(
-            command.Password,
-            user.PasswordHash);
+        var isPasswordValid = _passwordHasher.Verify(command.Password,user.PasswordHash);
 
         if (!isPasswordValid)
         {
             return IdentityErrors.InvalidCredentials;
         }
 
+        // Retrieve the user's roles for the access token
+        var roles = await _userRepository.GetRolesByUserIdAsync(user.Id, cancellationToken);
+
         // 4. Generate access token
-        var accessTokenResult = _tokenService.GenerateAccessToken(user);
+        var accessTokenResult = _tokenService.GenerateAccessToken(user, roles);
 
         if (accessTokenResult.IsError)
         {
@@ -57,8 +54,7 @@ public sealed class LoginCommandHandler(
         }
 
         // 5. Generate refresh token
-        var refreshTokenResult =
-            _refreshTokenService.Generate();
+        var refreshTokenResult = _refreshTokenService.Generate();
 
         if (refreshTokenResult.IsError)
         {
@@ -68,10 +64,7 @@ public sealed class LoginCommandHandler(
         var refreshToken = refreshTokenResult.Value;
 
         // 6. Persist refresh token/session
-        var storeRefreshTokenResult = await _refreshTokenService.StoreAsync(
-            user.Id,
-            refreshToken,
-            cancellationToken);
+        var storeRefreshTokenResult = await _refreshTokenService.StoreAsync( user.Id, refreshToken, cancellationToken);
 
         if (storeRefreshTokenResult.IsError)
             return storeRefreshTokenResult.Errors;
@@ -84,9 +77,7 @@ public sealed class LoginCommandHandler(
             RefreshTokenExpiresAt: refreshToken.ExpiresAt);
     }
 
-    private async Task<Result<User>> FindUserAsync(
-        string identifier,
-        CancellationToken cancellationToken)
+    private async Task<Result<User>> FindUserAsync(string identifier,CancellationToken cancellationToken)
     {
         var emailResult = Email.Create(identifier);
 
@@ -104,10 +95,7 @@ public sealed class LoginCommandHandler(
 
         if (!phoneResult.IsError)
         {
-            var userByPhone = await _userRepository
-                .GetByPhoneNumberAsync(
-                    phoneResult.Value,
-                    cancellationToken);
+            var userByPhone = await _userRepository.GetByPhoneNumberAsync(phoneResult.Value,cancellationToken);
 
             if (userByPhone is not null)
             {

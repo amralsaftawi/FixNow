@@ -1216,6 +1216,33 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.Navigation("TechnicianProfile");
                 });
 
+            modelBuilder.Entity("ServiceCategory", b =>
+                {
+                    b.OwnsOne("Money", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("ServiceCategoryId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("integer")
+                                .HasColumnName("PriceCurrency");
+
+                            b1.Property<decimal>("Value")
+                                .HasPrecision(12, 2)
+                                .HasColumnType("numeric(12,2)")
+                                .HasColumnName("Price");
+
+                            b1.HasKey("ServiceCategoryId");
+
+                            b1.ToTable("ServiceCategories");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ServiceCategoryId");
+                        });
+
+                    b.Navigation("Price");
+                });
+
             modelBuilder.Entity("ServiceRequest", b =>
                 {
                     b.HasOne("Address", "Address")

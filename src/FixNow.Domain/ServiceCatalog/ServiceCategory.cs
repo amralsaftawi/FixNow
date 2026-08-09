@@ -9,6 +9,8 @@ public sealed class ServiceCategory : AuditableEntity
 
     public int DisplayOrder { get; private set; }
 
+    public Money? Price { get; private set; }
+
     public bool IsActive { get; private set; }
 
 #pragma warning disable CS8618
@@ -134,6 +136,29 @@ public sealed class ServiceCategory : AuditableEntity
             return ServiceCategoryErrors.SameDisplayOrder;
 
         DisplayOrder = displayOrder;
+
+        return Result.Success;
+    }
+
+    public Result<Success> SetPrice(Money price)
+    {
+        if (price is null)
+            return ServiceCategoryErrors.PriceRequired;
+
+        if (Price == price)
+            return ServiceCategoryErrors.SamePrice;
+
+        Price = price;
+
+        return Result.Success;
+    }
+
+    public Result<Success> RemoveIcon()
+    {
+        if (IconKey is null)
+            return ServiceCategoryErrors.NoIcon;
+
+        IconKey = null;
 
         return Result.Success;
     }

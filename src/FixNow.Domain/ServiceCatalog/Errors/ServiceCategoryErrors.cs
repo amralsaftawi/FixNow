@@ -51,6 +51,21 @@ public static class ServiceCategoryErrors
             "ServiceCategory.SameDisplayOrder",
             "The display order is already the same.");
 
+    public static readonly Error PriceRequired =
+        Error.Validation(
+            "ServiceCategory.PriceRequired",
+            "Service category price is required.");
+
+    public static readonly Error SamePrice =
+        Error.Conflict(
+            "ServiceCategory.SamePrice",
+            "The new price is the same as the current price.");
+
+    public static readonly Error NoIcon =
+        Error.Conflict(
+            "ServiceCategory.NoIcon",
+            "The service category does not have an icon to remove.");
+
     public static readonly Error AlreadyActive =
         Error.Conflict(
             "ServiceCategory.AlreadyActive",

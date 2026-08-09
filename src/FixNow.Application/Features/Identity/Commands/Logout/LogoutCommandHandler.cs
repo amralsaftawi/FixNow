@@ -9,13 +9,9 @@ public sealed class LogoutCommandHandler(
     IRefreshTokenHasher refreshTokenHasher)
     : ICommandHandler<LogoutCommand, Result<Success>>
 {
-    public async Task<Result<Success>> Handle(
-        LogoutCommand command,
-        CancellationToken cancellationToken)
+    public async Task<Result<Success>> Handle( LogoutCommand command, CancellationToken cancellationToken)
     {
-        var refreshToken = await refreshTokenRepository.GetByTokenHashAsync(
-            refreshTokenHasher.Hash(command.RefreshToken),
-            cancellationToken);
+        var refreshToken = await refreshTokenRepository.GetByTokenHashAsync(refreshTokenHasher.Hash(command.RefreshToken),cancellationToken);
 
         if (refreshToken is null)
             return IdentityErrors.InvalidRefreshToken;
@@ -31,9 +27,7 @@ public sealed class LogoutCommandHandler(
         if (revokeResult.IsError)
             return revokeResult.Errors;
 
-        var wasRevoked = await refreshTokenRepository.TryRevokeAsync(
-            refreshToken,
-            cancellationToken);
+        var wasRevoked = await refreshTokenRepository.TryRevokeAsync(refreshToken,cancellationToken);
 
         if (!wasRevoked)
             return IdentityErrors.RefreshTokenRevoked;

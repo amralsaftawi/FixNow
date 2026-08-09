@@ -13,14 +13,12 @@ public sealed class SendOtpCommandHandler(
     : ICommandHandler<SendOtpCommand, Result<SendOtpResponse>>
 {
     private const int MaxAttempts = 5;
-    private static readonly TimeSpan Expiration = TimeSpan.FromMinutes(5);
-    private const string SuccessMessage = "If the account exists, an OTP has been sent.";
+    private const string SuccessMessage =
+        "If the account exists, an OTP has been sent.";
 
-    public async Task<Result<SendOtpResponse>> Handle(
-        SendOtpCommand command,
-        CancellationToken cancellationToken)
+    public async Task<Result<SendOtpResponse>> Handle(SendOtpCommand command,CancellationToken cancellationToken)
     {
-        var recipient = await FindRecipientAsync(command.Identifier, cancellationToken);
+        var recipient = await FindRecipientAsync( command.Identifier, cancellationToken);
 
         if (recipient is null)
             return CreateSuccessResponse();
@@ -38,29 +36,29 @@ public sealed class SendOtpCommandHandler(
                 return invalidateResult.Errors;
         }
 
-        await otpRepository.UpdateRangeAsync(existingOtpRecords, cancellationToken);
+        await otpRepository.UpdateRangeAsync(existingOtpRecords,cancellationToken);
 
-    var otpResult = otpGenerator.Generate();
+        var otpResult = otpGenerator.Generate();
 
-if (otpResult.IsError)
-{
-    return otpResult.Errors;
-}
+        if (otpResult.IsError)
+            return otpResult.Errors;
 
-   var otp = otpResult.Value;
+        var otp = otpResult.Value;
 
-   var createOtpResult = OTPRecord.Create(
-    Guid.NewGuid(),
-    recipient.User.Id,
-    otpHasher.Hash(otp.Code),
-    recipient.Purpose,
-    otp.ExpiresAt,
-    MaxAttempts);
+        var createOtpResult = OTPRecord.Create(
+            Guid.NewGuid(),
+            recipient.User.Id,
+            otpHasher.Hash(otp.Code),
+            recipient.Purpose,
+            otp.ExpiresAt,
+            MaxAttempts);
 
         if (createOtpResult.IsError)
             return createOtpResult.Errors;
 
-        await otpRepository.AddAsync(createOtpResult.Value, cancellationToken);
+        await otpRepository.AddAsync(
+            createOtpResult.Value,
+            cancellationToken);
 
         var sendResult = recipient.Purpose == OtpPurpose.EmailVerification
             ? await emailOtpSender.SendAsync(recipient.Destination, otp.Code, cancellationToken)
@@ -80,7 +78,9 @@ if (otpResult.IsError)
 
         if (!emailResult.IsError)
         {
-            var user = await userRepository.GetByEmailAsync(emailResult.Value, cancellationToken);
+            var user = await userRepository.GetByEmailAsync(
+                emailResult.Value,
+                cancellationToken);
 
             return user is null
                 ? null
@@ -88,13 +88,19 @@ if (otpResult.IsError)
         }
 
         var phoneNumberResult = PhoneNumber.Create(identifier);
-        var userByPhone = await userRepository.GetByPhoneNumberAsync(
-            phoneNumberResult.Value,
-            cancellationToken);
 
-        return userByPhone is null
-            ? null
-            : new OtpRecipient(userByPhone, phoneNumberResult.Value, OtpPurpose.PhoneVerification);
+        if (!phoneNumberResult.IsError)
+        {
+            var userByPhone = await userRepository.GetByPhoneNumberAsync(
+                phoneNumberResult.Value,
+                cancellationToken);
+
+            return userByPhone is null
+                ? null
+                : new OtpRecipient(userByPhone, phoneNumberResult.Value, OtpPurpose.PhoneVerification);
+        }
+
+        return null;
     }
 
     private static SendOtpResponse CreateSuccessResponse()

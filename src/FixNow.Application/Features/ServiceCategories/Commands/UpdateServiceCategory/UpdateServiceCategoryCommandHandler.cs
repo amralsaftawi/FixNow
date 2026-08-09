@@ -24,6 +24,14 @@ public sealed class UpdateServiceCategoryCommandHandler(
             return ServiceCategoryErrors.NotFound;
         }
 
+        if (command.Name != serviceCategory.Name
+            && await _serviceCategoryRepository.ExistsByNameAsync(
+                command.Name,
+                cancellationToken))
+        {
+            return ServiceCategoryErrors.NameAlreadyExists;
+        }
+
         var renameResult = serviceCategory.Rename(command.Name);
 
         if (renameResult.IsError)

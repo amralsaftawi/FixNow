@@ -13,8 +13,9 @@ public static class GetServiceCategoryByIdMapping
             ServiceCategoryId: entity.Id,
             Name: entity.Name,
             Description: entity.Description,
-            IconKey: entity.IconKey!,
+            IconKey: entity.IconKey,
             DisplayOrder: entity.DisplayOrder,
+            Price: entity.Price,
             IsActive: entity.IsActive);
     }
 }
