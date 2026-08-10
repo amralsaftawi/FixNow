@@ -15,33 +15,24 @@ public sealed class UsersController(ISender sender) : ApiController
 {
     [HttpGet]
     [Authorize]
-    [ProducesResponseType(
-        typeof(FixNow.Contracts.Responses.GetCurrentUserResponse),
-        StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(FixNow.Contracts.Responses.GetCurrentUserResponse),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetCurrentUser(
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> GetCurrentUser(CancellationToken cancellationToken)
     {
         var query = new GetCurrentUserQuery();
 
         var result = await sender.Send(query, cancellationToken);
 
-        return result.Match(
-            response => Ok(response.ToContractResponse()),
-            Problem);
+        return result.Match(response => Ok(response.ToContractResponse()),Problem);
     }
 
     [HttpPut]
     [Authorize]
-    [ProducesResponseType(
-        typeof(FixNow.Contracts.Responses.UpdateCurrentUserResponse),
-        StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(FixNow.Contracts.Responses.UpdateCurrentUserResponse),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> UpdateCurrentUser(
-        [FromBody] UpdateCurrentUserRequest request,
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdateCurrentUser([FromBody] UpdateCurrentUserRequest request,CancellationToken cancellationToken)
     {
         var command = new UpdateCurrentUserCommand(
             FirstName: request.FirstName,
@@ -53,21 +44,15 @@ public sealed class UsersController(ISender sender) : ApiController
 
         var result = await sender.Send(command, cancellationToken);
 
-        return result.Match(
-            response => Ok(response.ToContractResponse()),
-            Problem);
+        return result.Match(response => Ok(response.ToContractResponse()),Problem);
     }
 
     [HttpPost("change-password")]
     [Authorize]
-    [ProducesResponseType(
-        typeof(FixNow.Contracts.Responses.ChangePasswordResponse),
-        StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(FixNow.Contracts.Responses.ChangePasswordResponse),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> ChangePassword(
-        [FromBody] ChangePasswordRequest request,
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request,CancellationToken cancellationToken)
     {
         var command = new ChangePasswordCommand(
             CurrentPassword: request.CurrentPassword,
@@ -87,8 +72,7 @@ public sealed class UsersController(ISender sender) : ApiController
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> DeactivateCurrentUser(
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> DeactivateCurrentUser(CancellationToken cancellationToken)
     {
         var command = new DeactivateCurrentUserCommand();
 

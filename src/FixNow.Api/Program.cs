@@ -32,6 +32,10 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/uploads",
 });
 
+app.UseAuthentication();
+
+app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
