@@ -4,6 +4,8 @@ public sealed class TechnicianService : AuditableEntity
 
     public Guid ServiceCategoryId { get; private set; }
 
+    public Money? Price { get; private set; }
+
     // Navigation
 
     public TechnicianProfile TechnicianProfile { get; private set; } = null!;
@@ -44,5 +46,19 @@ public sealed class TechnicianService : AuditableEntity
         id,
         technicianProfileId,
         serviceCategoryId);
+}
+
+
+public Result<Success> SetPrice(Money price)
+{
+    if (price is null)
+        return TechnicianServiceErrors.PriceRequired;
+
+    if (Price == price)
+        return TechnicianServiceErrors.SamePrice;
+
+    Price = price;
+
+    return Result.Success;
 }
 }

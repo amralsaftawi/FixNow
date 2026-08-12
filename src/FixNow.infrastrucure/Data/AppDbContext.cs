@@ -22,6 +22,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     public DbSet<TechnicianProfile> TechnicianProfiles => Set<TechnicianProfile>();
     public DbSet<TechnicianService> TechnicianServices => Set<TechnicianService>();
+    public DbSet<TechnicianExperience> TechnicianExperiences => Set<TechnicianExperience>();
+    public DbSet<TechnicianPortfolioItem> TechnicianPortfolioItems => Set<TechnicianPortfolioItem>();
+    public DbSet<TechnicianPortfolioMedia> TechnicianPortfolioMedia => Set<TechnicianPortfolioMedia>();
 
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<Review> Reviews => Set<Review>();

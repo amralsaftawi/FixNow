@@ -15,4 +15,14 @@ public static class TechnicianServiceErrors
         Error.Validation(
             "TechnicianService.ServiceCategoryIdRequired",
             "Service category id is required.");
+
+    public static readonly Error PriceRequired =
+        Error.Validation(
+            "TechnicianService.PriceRequired",
+            "Technician service price is required.");
+
+    public static readonly Error SamePrice =
+        Error.Conflict(
+            "TechnicianService.SamePrice",
+            "The new price is the same as the current price.");
 }

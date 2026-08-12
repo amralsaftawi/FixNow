@@ -6,6 +6,9 @@ public sealed class TechnicianProfile : AuditableEntity
 
     public TechnicianAvailability Availability { get; private set; }
 
+    public TechnicianAvailabilitySettings AvailabilitySettings { get; private set; } =
+        null!;
+
     public int YearsOfExperience { get; private set; }
 
     public string? Bio { get; private set; }
@@ -22,6 +25,16 @@ public sealed class TechnicianProfile : AuditableEntity
 
     public IReadOnlyCollection<TechnicianService> Services =>
         _services.AsReadOnly();
+
+    private readonly List<TechnicianExperience> _experiences = [];
+
+    public IReadOnlyCollection<TechnicianExperience> Experiences =>
+        _experiences.AsReadOnly();
+
+    private readonly List<TechnicianPortfolioItem> _portfolioItems = [];
+
+    public IReadOnlyCollection<TechnicianPortfolioItem> PortfolioItems =>
+        _portfolioItems.AsReadOnly();
 
 #pragma warning disable CS8618
     private TechnicianProfile()
@@ -47,6 +60,14 @@ public sealed class TechnicianProfile : AuditableEntity
         VerificationStatus = VerificationStatus.Pending;
 
         Availability = TechnicianAvailability.Offline;
+
+        AvailabilitySettings = TechnicianAvailabilitySettings
+            .Create(
+                TechnicianAvailabilityStatus.NotAcceptingRequests,
+                [],
+                null,
+                null)
+            .Value;
 
         IsProfileCompleted = false;
     }
@@ -124,6 +145,24 @@ public Result<Success> RejectVerification()
     return Result.Success;
 }
 
+public Result<Success> SubmitForVerification()
+{
+    if (VerificationStatus == VerificationStatus.Verified)
+        return TechnicianProfileErrors.AlreadyVerified;
+
+    if (VerificationStatus == VerificationStatus.Pending)
+        return TechnicianProfileErrors.VerificationAlreadyPending;
+
+    VerificationStatus = VerificationStatus.Pending;
+
+    AddDomainEvent(
+        new TechnicianVerificationSubmittedDomainEvent(
+            Id,
+            UserId));
+
+    return Result.Success;
+}
+
 public Result<Success> UpdateBio(string? bio)
 {
     bio = bio?.Trim();
@@ -152,6 +191,26 @@ public Result<Success> UpdateAvailability(
         new TechnicianAvailabilityChangedDomainEvent(
             Id,
             availability));
+
+    return Result.Success;
+}
+
+
+public Result<Success> ConfigureAvailability(
+    TechnicianAvailabilitySettings availabilitySettings)
+{
+    if (availabilitySettings is null)
+        return TechnicianAvailabilityErrors.AvailabilitySettingsRequired;
+
+    if (AvailabilitySettings == availabilitySettings)
+        return TechnicianProfileErrors.SameAvailabilitySettings;
+
+    AvailabilitySettings = availabilitySettings;
+
+    AddDomainEvent(
+        new TechnicianAvailabilitySettingsUpdatedDomainEvent(
+            Id,
+            availabilitySettings.Status));
 
     return Result.Success;
 }
@@ -238,6 +297,80 @@ public Result<Success> UpdateYearsOfExperience(
         return TechnicianProfileErrors.SameYearsOfExperience;
 
     YearsOfExperience = yearsOfExperience;
+
+    return Result.Success;
+}
+
+public Result<Success> AddExperience(
+    TechnicianExperience experience)
+{
+    if (experience is null)
+        return TechnicianProfileErrors.ExperienceRequired;
+
+    if (_experiences.Any(x => x.Id == experience.Id))
+        return TechnicianProfileErrors.ExperienceAlreadyAdded;
+
+    _experiences.Add(experience);
+
+    AddDomainEvent(
+        new TechnicianExperienceAddedDomainEvent(
+            experience.Id,
+            Id));
+
+    return Result.Success;
+}
+
+public Result<Success> RemoveExperience(
+    Guid experienceId)
+{
+    var experience = _experiences.FirstOrDefault(x => x.Id == experienceId);
+
+    if (experience is null)
+        return TechnicianProfileErrors.ExperienceNotFound;
+
+    _experiences.Remove(experience);
+
+    AddDomainEvent(
+        new TechnicianExperienceRemovedDomainEvent(
+            experience.Id,
+            Id));
+
+    return Result.Success;
+}
+
+public Result<Success> AddPortfolioItem(
+    TechnicianPortfolioItem portfolioItem)
+{
+    if (portfolioItem is null)
+        return TechnicianProfileErrors.PortfolioItemRequired;
+
+    if (_portfolioItems.Any(x => x.Id == portfolioItem.Id))
+        return TechnicianProfileErrors.PortfolioItemAlreadyAdded;
+
+    _portfolioItems.Add(portfolioItem);
+
+    AddDomainEvent(
+        new TechnicianPortfolioItemCreatedDomainEvent(
+            portfolioItem.Id,
+            Id));
+
+    return Result.Success;
+}
+
+public Result<Success> RemovePortfolioItem(
+    Guid portfolioItemId)
+{
+    var portfolioItem = _portfolioItems.FirstOrDefault(x => x.Id == portfolioItemId);
+
+    if (portfolioItem is null)
+        return TechnicianProfileErrors.PortfolioItemNotFound;
+
+    _portfolioItems.Remove(portfolioItem);
+
+    AddDomainEvent(
+        new TechnicianPortfolioItemRemovedDomainEvent(
+            portfolioItem.Id,
+            Id));
 
     return Result.Success;
 }

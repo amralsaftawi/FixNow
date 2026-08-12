@@ -8,23 +8,11 @@ namespace FixNow.Application.Features.TechnicianProfiles.Queries.GetMyTechnician
 public sealed class GetMyTechnicianProfileQueryHandler(
     ITechnicianProfileRepository technicianProfileRepository,
     ICurrentUser currentUser)
-    : IQueryHandler<
-        GetMyTechnicianProfileQuery,
-        Result<TechnicianProfileResponse>>
+    : IQueryHandler<GetMyTechnicianProfileQuery, Result<TechnicianProfileResponse>>
 {
-    private readonly ITechnicianProfileRepository _technicianProfileRepository =
-        technicianProfileRepository;
-
-    private readonly ICurrentUser _currentUser =
-        currentUser;
-
-    public async Task<Result<TechnicianProfileResponse>> Handle(
-        GetMyTechnicianProfileQuery query,
-        CancellationToken cancellationToken)
+    public async Task<Result<TechnicianProfileResponse>> Handle(GetMyTechnicianProfileQuery query,CancellationToken cancellationToken)
     {
-        var technicianProfile = await _technicianProfileRepository.GetByUserIdAsync(
-            _currentUser.UserId,
-            cancellationToken);
+        var technicianProfile = await technicianProfileRepository.GetByUserIdAsync(currentUser.UserId, cancellationToken);
 
         if (technicianProfile is null)
         {

@@ -1,3 +1,4 @@
+using System.Text;
 using FixNow.Application.Common.Interfaces.Persistence.Repositories;
 using FixNow.Infrastructure.Authentication;
 using FixNow.Infrastructure.Persistence.Repositories.ServiceCategory;
@@ -9,15 +10,15 @@ using FixNow.Infrastructure.Persistence.Repositories.Geographic;
 using FixNow.Infrastructure.Services;
 using FixNow.Infrastructure.UnitOfWork;
 using FixNow.Application.Features.Identity.Commands.VerifyOtp.Processors;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using FixNow.Application.Common.Interfaces.Authentication;
 using FixNow.Application.Common.Interfaces.Storage;
-using FixNow.Infrastructure.Services.Otp;
 using FixNow.Infrastructure.Storage;
-using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FixNow.Infrastructure;
 
@@ -57,15 +58,40 @@ public static class DependencyInjection
         services.AddSingleton<IRefreshTokenHasher, RefreshTokenHasher>();
         services.AddSingleton<IOtpGenerator, OtpGenerator>();
         services.AddSingleton<IOtpHasher, OtpHasher>();
-        services.AddScoped<IEmailOtpSender, EmailOtpSender>();
+        services.AddScoped<IOtpSender, EmailOtpSender>();
 
         services.AddScoped<ITokenService, TokenService>();
+
+        var jwtSection = configuration.GetSection("Jwt");
+
+        var signingKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(
+                jwtSection["SecretKey"]
+                ?? throw new InvalidOperationException(
+                    "JWT SecretKey is not configured.")));
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSection["Issuer"],
+                    ValidAudience = jwtSection["Audience"],
+                    IssuerSigningKey = signingKey,
+                    ClockSkew = TimeSpan.FromMinutes(5)
+                };
+            });
+
+        services.AddAuthorization();
 
         services.AddScoped<IFileStorage, LocalFileStorage>();
 
         services.AddScoped<IOtpPurposeProcessor, EmailVerificationProcessor>();
         services.AddScoped<IOtpPurposeProcessor, PhoneVerificationProcessor>();
-        services.AddScoped<IOtpSender, OtpSender>();
 
 
         return services;

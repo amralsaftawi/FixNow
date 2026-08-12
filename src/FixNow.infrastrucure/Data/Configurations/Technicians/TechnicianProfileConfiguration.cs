@@ -13,6 +13,28 @@ public sealed class TechnicianProfileConfiguration : IEntityTypeConfiguration<Te
             .HasConversion<int>();
         builder.Property(x => x.Availability)
             .HasConversion<int>();
+
+        builder.OwnsOne(x => x.AvailabilitySettings, availability =>
+        {
+            availability.Property(x => x.Status)
+                .HasConversion<int>()
+                .HasDefaultValue(TechnicianAvailabilityStatus.NotAcceptingRequests);
+
+            availability.Property(x => x.VacationStartDate);
+
+            availability.Property(x => x.VacationEndDate);
+
+            availability.OwnsMany(x => x.WorkingDays, workingDay =>
+            {
+                workingDay.Property(x => x.Day)
+                    .HasConversion<int>();
+
+                workingDay.Property(x => x.StartTime);
+
+                workingDay.Property(x => x.EndTime);
+            });
+        });
+
         builder.Property(x => x.YearsOfExperience).IsRequired();
         builder.Property(x => x.Bio)
             .HasMaxLength(1000)
@@ -39,6 +61,11 @@ public sealed class TechnicianProfileConfiguration : IEntityTypeConfiguration<Te
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(x => x.Services)
+            .WithOne(x => x.TechnicianProfile)
+            .HasForeignKey(x => x.TechnicianProfileId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(x => x.Experiences)
             .WithOne(x => x.TechnicianProfile)
             .HasForeignKey(x => x.TechnicianProfileId)
             .OnDelete(DeleteBehavior.Restrict);

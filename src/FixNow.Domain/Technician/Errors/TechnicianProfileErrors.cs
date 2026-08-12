@@ -41,6 +41,11 @@ public static class TechnicianProfileErrors
             "TechnicianProfile.AlreadyRejected",
             "Technician profile is already rejected.");
 
+    public static readonly Error VerificationAlreadyPending =
+        Error.Conflict(
+            "TechnicianProfile.VerificationAlreadyPending",
+            "Technician verification is already pending review.");
+
     public static readonly Error SameBio =
         Error.Conflict(
             "TechnicianProfile.SameBio",
@@ -54,6 +59,11 @@ public static class TechnicianProfileErrors
         Error.Conflict(
             "TechnicianProfile.SameAvailability",
             "The technician already has this availability status.");
+
+    public static readonly Error SameAvailabilitySettings =
+        Error.Conflict(
+            "TechnicianProfile.SameAvailabilitySettings",
+            "The technician already has this availability configuration.");
 
     public static readonly Error SameNationalIdImage =
         Error.Conflict(
@@ -79,4 +89,34 @@ public static class TechnicianProfileErrors
         Error.NotFound(
             "TechnicianProfile.ServiceNotFound",
             "The requested service was not found.");
+
+    public static readonly Error ExperienceRequired =
+        Error.Validation(
+            "TechnicianProfile.ExperienceRequired",
+            "Technician experience is required.");
+
+    public static readonly Error ExperienceAlreadyAdded =
+        Error.Conflict(
+            "TechnicianProfile.ExperienceAlreadyAdded",
+            "This experience has already been added.");
+
+    public static readonly Error ExperienceNotFound =
+        Error.NotFound(
+            "TechnicianProfile.ExperienceNotFound",
+            "The requested experience was not found.");
+
+    public static readonly Error PortfolioItemRequired =
+        Error.Validation(
+            "TechnicianProfile.PortfolioItemRequired",
+            "Technician portfolio item is required.");
+
+    public static readonly Error PortfolioItemAlreadyAdded =
+        Error.Conflict(
+            "TechnicianProfile.PortfolioItemAlreadyAdded",
+            "This portfolio item has already been added.");
+
+    public static readonly Error PortfolioItemNotFound =
+        Error.NotFound(
+            "TechnicianProfile.PortfolioItemNotFound",
+            "The requested portfolio item was not found.");
 }

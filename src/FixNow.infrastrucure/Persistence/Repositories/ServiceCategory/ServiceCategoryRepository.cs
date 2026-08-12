@@ -44,6 +44,21 @@ public sealed class ServiceCategoryRepository : IServiceCategoryRepository
                 cancellationToken);
     }
 
+    public async Task<IReadOnlyCollection<global::ServiceCategory>> GetByIdsAsync(
+        IReadOnlyCollection<Guid> ids,
+        CancellationToken cancellationToken = default)
+    {
+        if (ids.Count == 0)
+        {
+            return [];
+        }
+
+        return await _dbContext.ServiceCategories
+            .AsNoTracking()
+            .Where(category => ids.Contains(category.Id))
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<PagedResult<global::ServiceCategory>> GetPagedAsync(
         string? search,
         bool? isActive,

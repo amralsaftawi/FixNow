@@ -5,11 +5,21 @@ public sealed class TechnicianServiceConfiguration : IEntityTypeConfiguration<Te
 {
     public void Configure(EntityTypeBuilder<TechnicianService> builder)
     {
-        builder.ToTable("TechnicianServices");
+        builder.ToTable(table => table.HasCheckConstraint("CK_TechnicianServices_Price", "\"Price\" > 0"));
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.TechnicianProfileId).IsRequired();
         builder.Property(x => x.ServiceCategoryId).IsRequired();
+        builder.OwnsOne(x => x.Price, owned =>
+        {
+            owned.Property(m => m.Value)
+                .HasColumnName("Price")
+                .HasPrecision(12, 2);
+
+            owned.Property(m => m.Currency)
+                .HasColumnName("PriceCurrency")
+                .HasConversion<int>();
+        });
 
         builder.Property(x => x.CreatedAtUtc)
             .HasDefaultValueSql("CURRENT_TIMESTAMP");

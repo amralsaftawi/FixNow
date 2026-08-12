@@ -7,8 +7,18 @@ public sealed class GetTechnicianProfilesQueryValidator
 {
     public GetTechnicianProfilesQueryValidator()
     {
+        ValidateVerificationStatus();
+
         ValidatePageNumber();
+
         ValidatePageSize();
+    }
+
+    private void ValidateVerificationStatus()
+    {
+        RuleFor(x => x.VerificationStatus)
+            .IsInEnum()
+            .WithErrorCode("TechnicianProfile.VerificationStatus.Invalid");
     }
 
     private void ValidatePageNumber()

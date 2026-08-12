@@ -1,4 +1,5 @@
 using FixNow.Application.Common.Abstractions.Messaging;
+using FixNow.Application.Common.Interfaces.Authentication;
 using FixNow.Application.Common.Interfaces.Persistence.Repositories;
 
 namespace FixNow.Application.Features.Identity.Commands.SendOtp;
@@ -8,8 +9,7 @@ public sealed class SendOtpCommandHandler(
     IOtpRepository otpRepository,
     IOtpGenerator otpGenerator,
     IOtpHasher otpHasher,
-    IEmailOtpSender emailOtpSender,
-    ISmsOtpSender smsOtpSender)
+    IOtpSender otpSender)
     : ICommandHandler<SendOtpCommand, Result<SendOtpResponse>>
 {
     private const int MaxAttempts = 5;
@@ -60,9 +60,11 @@ public sealed class SendOtpCommandHandler(
             createOtpResult.Value,
             cancellationToken);
 
-        var sendResult = recipient.Purpose == OtpPurpose.EmailVerification
-            ? await emailOtpSender.SendAsync(recipient.Destination, otp.Code, cancellationToken)
-            : await smsOtpSender.SendAsync(recipient.Destination, otp.Code, cancellationToken);
+        var sendResult = await otpSender.SendAsync(
+            recipient.User,
+            otp.Code,
+            recipient.Purpose,
+            cancellationToken);
 
         if (sendResult.IsError)
             return sendResult.Errors;
@@ -84,7 +86,7 @@ public sealed class SendOtpCommandHandler(
 
             return user is null
                 ? null
-                : new OtpRecipient(user, emailResult.Value, OtpPurpose.EmailVerification);
+                : new OtpRecipient(user, OtpPurpose.EmailVerification);
         }
 
         var phoneNumberResult = PhoneNumber.Create(identifier);
@@ -97,7 +99,7 @@ public sealed class SendOtpCommandHandler(
 
             return userByPhone is null
                 ? null
-                : new OtpRecipient(userByPhone, phoneNumberResult.Value, OtpPurpose.PhoneVerification);
+                : new OtpRecipient(userByPhone, OtpPurpose.PhoneVerification);
         }
 
         return null;
@@ -108,6 +110,5 @@ public sealed class SendOtpCommandHandler(
 
     private sealed record OtpRecipient(
         User User,
-        string Destination,
         OtpPurpose Purpose);
 }

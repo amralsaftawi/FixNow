@@ -9,9 +9,7 @@ public sealed class GetCurrentUserQueryHandler(
     IUserRepository userRepository)
     : IQueryHandler<GetCurrentUserQuery, Result<GetCurrentUserResponse>>
 {
-    public async Task<Result<GetCurrentUserResponse>> Handle(
-        GetCurrentUserQuery query,
-        CancellationToken cancellationToken)
+    public async Task<Result<GetCurrentUserResponse>> Handle(GetCurrentUserQuery query,CancellationToken cancellationToken)
     {
         if (!currentUser.IsAuthenticated)
             return IdentityErrors.Unauthorized;

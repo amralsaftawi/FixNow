@@ -1,21 +1,17 @@
 <div align="center">
 
-# 🛠️ FixNow
+# FixNow
 
-### The Backend Behind a Production-Grade Service Marketplace
+**Fixing your home problems instantly.**
 
-**Connecting customers with verified technicians — engineered like a system meant to run at scale, not a tutorial demo.**
+An on-demand home services platform connecting customers with trusted, verified technicians for maintenance, repairs, and emergency services.
 
-[![.NET](https://img.shields.io/badge/.NET-10-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
-[![C#](https://img.shields.io/badge/C%23-ASP.NET_Core-239120?style=for-the-badge&logo=csharp&logoColor=white)](https://learn.microsoft.com/aspnet/core)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-EF_Core-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Architecture](https://img.shields.io/badge/Architecture-Clean%20%2B%20DDD-0A66C2?style=for-the-badge)](#-architecture)
-[![License](https://img.shields.io/badge/License-MIT-black?style=for-the-badge)](#-license)
-
-[![Status](https://img.shields.io/badge/Status-Active%20Development-yellow?style=flat-square)](#-future-roadmap)
-[![CQRS](https://img.shields.io/badge/Pattern-CQRS-informational?style=flat-square)](#-architecture)
-[![Problem Details](https://img.shields.io/badge/Errors-RFC%209457-informational?style=flat-square)](#-error-handling)
-[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square)](#-contributing)
+[![.NET](https://img.shields.io/badge/.NET-10-512BD4?style=flat-square&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![C#](https://img.shields.io/badge/C%23-ASP.NET_Core-239120?style=flat-square&logo=csharp&logoColor=white)](https://learn.microsoft.com/aspnet/core)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-EF_Core-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Architecture](https://img.shields.io/badge/Architecture-Clean%20%2B%20DDD-0A66C2?style=flat-square)](#system-architecture)
+[![Status](https://img.shields.io/badge/Status-In%20Development-yellow?style=flat-square)](#project-roadmap)
+[![License](https://img.shields.io/badge/License-MIT-black?style=flat-square)](#license)
 
 </div>
 
@@ -23,569 +19,400 @@
 
 <div align="center">
 
-### 📖 Navigation
-
-[Why FixNow](#-why-fixnow) • [Features](#-features) • [Tech Stack](#-tech-stack) • [Architecture](#-architecture) • [Diagrams](#-architecture-diagram) • [Auth Flow](#-authentication-flow) • [Folder Structure](#-folder-structure) • [API Endpoints](#-api-endpoints) • [Error Handling](#-error-handling) • [Security](#-security) • [Design Principles](#-design-principles) • [Scalability](#-scalability) • [Roadmap](#-future-roadmap) • [Running the Project](#-running-the-project) • [Contributing](#-contributing) • [Contact](#-contact)
+[Why FixNow](#why-fixnow) · [How It Works](#how-fixnow-works) · [Capabilities](#core-product-capabilities) · [Architecture](#system-architecture) · [Tech Stack](#technology-stack) · [Domain](#domain-overview) · [Auth](#authentication--trust-model) · [Roadmap](#project-roadmap) · [Getting Started](#getting-started)
 
 </div>
 
 ---
 
-## 💡 Why FixNow
+## What Is FixNow?
 
-Home and vehicle services — electrical work, plumbing, carpentry, painting, appliance repair, HVAC — are still largely booked through phone calls, word of mouth, and unreliable local listings. **FixNow is the backend for a platform that fixes that**: a marketplace where customers can find *verified* technicians, and technicians can build a reputation and a pipeline of work.
+A customer has a problem at home — a leaking pipe, a broken outlet, an AC unit that stopped working. **FixNow connects that customer with a verified technician** who can fix it: plumbers, electricians, AC technicians, carpenters, cleaners, and other home-maintenance professionals.
 
-The business problem is simple. The engineering problem is not:
-
-- Technicians and customers need to be **matched reliably**, even as the catalog of categories and providers grows.
-- Every write — a booking, a review, a payment — must be **consistent**, not "probably fine."
-- The system has to be **maintainable by a team**, not just readable by the person who wrote it.
-- It has to be built so that **scaling to another city, another country, or another order of magnitude of users** is a capacity problem, not a rewrite.
-
-FixNow exists to prove that this kind of system can be designed correctly from day one — with the architecture, patterns, and discipline of a production platform, not a weekend project.
+The platform is built to support the full lifecycle of a home-service request — from discovery and request, through technician matching and job execution, to completion and feedback — with the trust, verification, and reliability that on-demand marketplaces require.
 
 ---
 
-## ✨ Features
+## Why FixNow?
 
-<table>
-<tr><td width="50%" valign="top">
+Booking a home technician today is still largely informal: phone numbers passed between neighbors, unverified listings, no visibility into who is actually showing up. That creates real friction, especially for anything urgent.
 
-**🔐 Authentication**
-- ✅ Register
-- ✅ Login
-- ✅ Refresh Token
-- ✅ Send OTP
-- ✅ Verify OTP
+| Problem | How FixNow Addresses It |
+|---|---|
+| Finding a reliable technician is hard | A marketplace of **verified** technicians, discoverable by service category |
+| No visibility into technician quality | Ratings, reviews, and verification status as first-class product data |
+| Emergency issues need a fast response | Structured service requests instead of ad-hoc phone calls |
+| Service discovery is fragmented across channels | A single platform for browsing categories and requesting service |
+| Technicians lack a structured pipeline of work | A dedicated technician experience for managing profile, availability, and incoming requests |
 
-</td><td width="50%" valign="top">
-
-**🧑‍🔧 Marketplace**
-- ✅ Technician Module
-- ✅ Service Categories
-- ✅ Technician Discovery
-- ✅ Role-based architecture
-
-</td></tr>
-<tr><td width="50%" valign="top">
-
-**⚙️ Application Infrastructure**
-- ✅ Validation pipeline
-- ✅ Logging pipeline
-- ✅ Performance pipeline
-- ✅ Transaction pipeline
-
-</td><td width="50%" valign="top">
-
-**🚨 Reliability**
-- ✅ Global exception handling
-- ✅ Production-ready error handling
-- ✅ RFC 9457 Problem Details responses
-
-</td></tr>
-</table>
+The long-term goal isn't to be a directory of technicians — it's to be the **infrastructure** that on-demand home services run on.
 
 ---
 
-## 🧰 Tech Stack
+## How FixNow Works
 
-<div align="center">
+```mermaid
+flowchart TD
+    A[Customer] --> B[Discover Service Category]
+    B --> C[Request Service]
+    C --> D[Match with Technician]
+    D --> E[Technician Accepts]
+    E --> F[Service Execution]
+    F --> G[Job Completion]
+    G --> H[Rating & Review]
 
-| Category | Technology | Purpose |
-|---|---|---|
-| **Language & Runtime** | C# / .NET 10 | Core application runtime |
-| **Web Framework** | ASP.NET Core Web API | HTTP layer & REST API |
-| **Database** | PostgreSQL | Primary relational data store |
-| **ORM** | Entity Framework Core | Data access & migrations |
-| **Mediation** | MediatR | CQRS command/query dispatch |
-| **Validation** | FluentValidation | Declarative input validation |
-| **Auth** | JWT + Refresh Tokens | Stateless authentication |
-| **Error Contract** | RFC 9457 Problem Details | Standardized error responses |
-| **Architecture** | Clean Architecture, DDD, CQRS | Structural & domain modeling |
-| **Patterns** | Repository, Unit of Work, Result Pattern, Domain Events | Data access & flow control |
+    style A fill:#0d0d0d,color:#fff,stroke:#ffb84d
+    style H fill:#0d0d0d,color:#fff,stroke:#4dff88
+```
 
-</div>
-
----
-
-## 🏗️ Architecture
-
-FixNow is built on four architectural pillars. Each one solves a specific engineering problem — none of them are here for decoration.
-
-| Pattern | What It Means | Why It's Here |
-|---|---|---|
-| **Clean Architecture** | Code is organized into concentric layers (Domain → Application → Infrastructure → Presentation), with dependencies always pointing inward. | Keeps business logic independent of frameworks, databases, and delivery mechanisms — so the domain can be tested, reasoned about, and evolved in isolation. |
-| **Domain-Driven Design (DDD)** | The domain model — entities, value objects, aggregates, domain events — reflects the actual business (customers, technicians, bookings), not the database schema. | Prevents the codebase from becoming an anemic CRUD wrapper around tables. The code speaks the language of the business. |
-| **CQRS (via MediatR)** | Commands (writes) and Queries (reads) are modeled as distinct objects with distinct handlers, instead of one bloated "service" class. | Reads and writes have different performance profiles and different concerns. Separating them keeps each handler small, focused, and independently optimizable. |
-| **Result Pattern** | Handlers return an explicit `Result<T>` instead of throwing exceptions for expected failures (e.g. "invalid OTP", "email taken"). | Exceptions are for the exceptional. Business failures are a normal part of a request's lifecycle and should be handled as data, not as control-flow-breaking events. |
-| **Domain Events** | Side effects of a business action (e.g. sending an OTP after registration) are raised as events from the domain and handled separately from the action that triggered them. | Keeps the core action (e.g. "create user") decoupled from its consequences (e.g. "notify user"), so one failing side effect can't corrupt the primary operation. |
+This is the product's core loop. Today, the **identity, verification, and technician-discovery** stages of this flow are implemented; the **request-through-review** stages are on the roadmap (see [Project Roadmap](#project-roadmap)).
 
 ---
 
-## 🗺️ Architecture Diagram
+## Core Product Capabilities
+
+### Customer Experience
+
+| Capability | Status |
+|---|---|
+| Account registration & authentication | ✅ Implemented |
+| Account verification (OTP) | ✅ Implemented |
+| Technician discovery | ✅ Implemented |
+| Service category browsing | ✅ Implemented |
+| Profile management | 🔜 Planned |
+| Service requests | 🔜 Planned |
+| Address / location management | 🔜 Planned |
+| Service status tracking | 🔜 Planned |
+| Ratings and reviews | 🔜 Planned |
+
+### Technician Experience
+
+| Capability | Status |
+|---|---|
+| Technician module (foundation) | ✅ Implemented |
+| Role-based access | ✅ Implemented |
+| Technician onboarding & profile creation | 🔜 Planned |
+| Availability management | 🔜 Planned |
+| Receiving & managing service opportunities | 🔜 Planned |
+| Customer feedback visibility | 🔜 Planned |
+
+### Trust & Safety
+
+| Capability | Status |
+|---|---|
+| OTP-based account verification | ✅ Implemented |
+| Secure token-based authentication | ✅ Implemented |
+| Technician verification workflow | 🔜 Planned |
+| Identity / document verification | 🔜 Planned |
+| Ratings and reviews as a trust signal | 🔜 Planned |
+
+---
+
+## System Architecture
+
+FixNow is a backend-first system built on **Clean Architecture**, keeping the business logic independent of the web framework, the database, and any external service.
 
 ```mermaid
 flowchart TB
-    subgraph Presentation["🌐 Presentation Layer"]
-        API[ASP.NET Core Web API]
-    end
-
-    subgraph Application["⚙️ Application Layer"]
-        CMD[Commands]
-        QRY[Queries]
-        PIPE[Pipeline Behaviors]
-        VAL[FluentValidation]
-        RES[Result Pattern]
-    end
-
-    subgraph Domain["🎯 Domain Layer"]
-        ENT[Entities & Aggregates]
-        VO[Value Objects]
-        EVT[Domain Events]
-        RULES[Business Rules]
-    end
-
-    subgraph Infrastructure["🗄️ Infrastructure Layer"]
-        EF[EF Core / PostgreSQL]
-        REPO[Repositories]
-        UOW[Unit of Work]
-        JWT[JWT / Token Services]
-    end
-
-    API --> Application
-    Application --> Domain
-    Infrastructure -.implements interfaces from.-> Application
-    Infrastructure -.implements interfaces from.-> Domain
-    API -.wired via DI.-> Infrastructure
-
-    style Domain fill:#2d2d2d,color:#fff,stroke:#7c4dff,stroke-width:2px
-    style Application fill:#1a1a2e,color:#fff,stroke:#4dabff,stroke-width:2px
-    style Infrastructure fill:#1a1a1a,color:#fff,stroke:#4dff88,stroke-width:2px
-    style Presentation fill:#0d0d0d,color:#fff,stroke:#ffb84d,stroke-width:2px
-```
-
-**The rule:** `Domain` depends on nothing. `Application` depends only on `Domain`. `Infrastructure` and `Presentation` depend on `Application` and implement its interfaces — never the reverse. This is enforced by project references, not convention.
-
----
-
-## 🔀 Request Flow Diagram
-
-Every request follows the same path through the layers, regardless of feature:
-
-```mermaid
-flowchart LR
-    A[📥 API Controller] --> B[⚙️ Application<br/>Command / Query + MediatR Pipeline]
-    B --> C[🎯 Domain<br/>Business Rules & Entities]
-    C --> D[🗄️ Infrastructure<br/>Repository / Unit of Work]
-    D --> E[(🐘 PostgreSQL)]
-    E --> D
-    D --> C
-    C --> B
-    B --> A
-    A --> F[📤 HTTP Response]
+    A[Clients<br/>Mobile / Web] --> B[FixNow API<br/>HTTP / REST]
+    B --> C[Application<br/>Use Cases · CQRS · Business Workflows]
+    C --> D[Domain<br/>Business Rules · Domain Models]
+    D --> E[Infrastructure<br/>Persistence · External Services]
 
     style A fill:#0d0d0d,color:#fff,stroke:#ffb84d
     style B fill:#1a1a2e,color:#fff,stroke:#4dabff
-    style C fill:#2d2d2d,color:#fff,stroke:#7c4dff
-    style D fill:#1a1a1a,color:#fff,stroke:#4dff88
-    style E fill:#0f2a1f,color:#fff,stroke:#4dff88
+    style C fill:#1a1a2e,color:#fff,stroke:#4dabff
+    style D fill:#2d2d2d,color:#fff,stroke:#7c4dff
+    style E fill:#1a1a1a,color:#fff,stroke:#4dff88
 ```
 
-The controller never talks to the database, and the domain never knows PostgreSQL exists. Every request is dispatched through MediatR, passes through the validation/logging/performance/transaction pipeline, executes domain logic, and persists via the repository abstraction.
+The dependency direction is deliberate: **Domain** has no knowledge of **Infrastructure**. Business rules don't change if the database, the identity provider, or the delivery mechanism changes — only the outer layers do. This is what makes it possible to add new capabilities (payments, notifications, matching) as new bounded contexts, rather than as changes threaded through the entire codebase.
 
 ---
 
-## 🔐 Authentication Flow
+## Engineering Principles
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant API
-    participant AuthHandler as Auth Handlers
-    participant DB as PostgreSQL
+The architecture isn't chosen for its own sake — each decision maps to a concrete concern in a marketplace system:
 
-    rect rgb(20,20,30)
-    Note over User,DB: Registration
-    User->>API: POST /register
-    API->>AuthHandler: RegisterCommand
-    AuthHandler->>DB: Create user (unverified)
-    AuthHandler-->>User: Trigger OTP dispatch
-    end
-
-    rect rgb(30,25,15)
-    Note over User,DB: OTP Verification
-    User->>API: POST /otp/send
-    API->>AuthHandler: SendOtpCommand
-    AuthHandler-->>User: OTP delivered
-    User->>API: POST /otp/verify
-    API->>AuthHandler: VerifyOtpCommand
-    AuthHandler->>DB: Mark account as verified
-    end
-
-    rect rgb(20,30,20)
-    Note over User,DB: Login
-    User->>API: POST /login
-    API->>AuthHandler: LoginCommand
-    AuthHandler->>DB: Validate credentials
-    DB-->>AuthHandler: User record
-    AuthHandler-->>User: Access Token (short-lived) + Refresh Token (long-lived)
-    end
-
-    rect rgb(15,20,30)
-    Note over User,DB: Token Refresh
-    User->>API: POST /refresh
-    API->>AuthHandler: RefreshTokenCommand
-    AuthHandler->>DB: Validate & rotate refresh token
-    DB-->>AuthHandler: New token pair
-    AuthHandler-->>User: New Access Token + New Refresh Token
-    end
-```
-
-**Design notes:**
-- Access tokens are short-lived and stateless, so authorizing a request never requires a database round trip.
-- Refresh tokens rotate on every use — a leaked refresh token has a limited, single-use window.
-- OTP dispatch and verification are handled as distinct steps, keeping registration fast and the verification requirement enforceable independently.
+- **Clean Architecture** keeps the domain (users, technicians, verification rules) independent of ASP.NET Core and PostgreSQL, so either can change without rewriting business logic.
+- **CQRS**, implemented via MediatR, separates read workflows (discovery, browsing) from write workflows (registration, verification), since a marketplace's read and write paths tend to scale and evolve differently.
+- **Domain-Driven Design** keeps the codebase modeling *customers*, *technicians*, and *verification* — not just database tables — so the code stays legible as the product grows.
+- **Result Pattern** treats expected business outcomes (an invalid OTP, a duplicate account) as data returned from a handler, not exceptions — keeping control flow predictable in a system where "the operation didn't succeed" is a normal outcome, not a failure of the system itself.
+- **Repository abstractions** isolate persistence behind interfaces the Application layer owns, so infrastructure — including things like OTP delivery — can be swapped without touching business logic.
+- **Explicit layer boundaries** between API, Application, Domain, and Infrastructure mean business logic never lives in a controller, and infrastructure concerns never leak into domain code.
 
 ---
 
-## 📁 Folder Structure
+## Technology Stack
 
-```
-FixNow/
-│
-├── src/
-│   ├── FixNow.Domain/               # 🎯 Enterprise business rules
-│   │   ├── Entities/                # Aggregate roots & entities (User, Technician, ...)
-│   │   ├── ValueObjects/            # Immutable domain concepts
-│   │   ├── Events/                  # Domain events
-│   │   └── Exceptions/              # Domain-specific exceptions
-│   │
-│   ├── FixNow.Application/          # ⚙️ Use cases & orchestration
-│   │   ├── Features/
-│   │   │   ├── Authentication/      # Register, Login, Refresh, OTP
-│   │   │   └── Technicians/         # Discovery, Categories
-│   │   ├── Common/
-│   │   │   ├── Behaviors/           # Logging, Validation, Performance, Transaction
-│   │   │   ├── Interfaces/          # Repository & service contracts
-│   │   │   └── Results/             # Result<T> pattern
-│   │   └── DependencyInjection.cs
-│   │
-│   ├── FixNow.Infrastructure/       # 🗄️ External concerns
-│   │   ├── Persistence/
-│   │   │   ├── Configurations/      # EF Core entity configurations
-│   │   │   ├── Repositories/        # Repository implementations
-│   │   │   └── UnitOfWork/
-│   │   ├── Authentication/          # JWT, refresh token, OTP services
-│   │   └── DependencyInjection.cs
-│   │
-│   └── FixNow.API/                  # 🌐 Entry point
-│       ├── Controllers/
-│       ├── Middleware/              # Global exception handling → Problem Details
-│       └── Program.cs
-│
-├── tests/
-│   ├── FixNow.Domain.Tests/
-│   ├── FixNow.Application.Tests/
-│   └── FixNow.Infrastructure.Tests/
-│
-└── FixNow.sln
-```
-
-<details>
-<summary><strong>📌 What each layer is responsible for</strong></summary>
-
-<br/>
-
-| Layer | Responsibility | Depends On |
-|---|---|---|
-| **Domain** | Entities, value objects, domain events, invariants | Nothing |
-| **Application** | Use cases (commands/queries), validation, orchestration | Domain |
-| **Infrastructure** | EF Core, PostgreSQL, JWT, repositories | Application, Domain |
-| **API** | HTTP endpoints, middleware, request/response mapping | Application (via DI) |
-
-Separating these into distinct projects means the dependency rules are enforced by the compiler — `Domain` physically cannot reference `Infrastructure`.
-
-</details>
-
----
-
-## 🔑 Authentication Module
-
-| Capability | Description |
+| Layer | Technology |
 |---|---|
-| **Register** | Creates a new user account in an unverified state and triggers OTP delivery. |
-| **Login** | Validates credentials and issues an access token / refresh token pair. |
-| **Refresh Token** | Exchanges a valid, unexpired refresh token for a new token pair, rotating the refresh token in the process. |
-| **Send OTP** | Generates and dispatches a one-time password for account verification. |
-| **Verify OTP** | Validates the submitted OTP and marks the account as verified. |
+| Backend Framework | ASP.NET Core |
+| Language / Runtime | C# / .NET 10 |
+| Application Layer | MediatR, CQRS |
+| ORM | Entity Framework Core |
+| Database | PostgreSQL |
+| Authentication | JWT + Refresh Tokens |
+| Account Verification | OTP |
+| Validation | FluentValidation |
+| API Style | REST |
+| Error Contract | RFC 9457 Problem Details |
 
 ---
 
-## 📡 API Endpoints
+## Domain Overview
 
-<div align="center">
+At a business level, FixNow's domain centers on two kinds of users and the services that connect them:
 
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| `POST` | `/api/auth/register` | Register a new user | ❌ |
-| `POST` | `/api/auth/login` | Authenticate and receive tokens | ❌ |
-| `POST` | `/api/auth/refresh` | Rotate access/refresh tokens | ❌ |
-| `POST` | `/api/auth/otp/send` | Send a one-time password | ❌ |
-| `POST` | `/api/auth/otp/verify` | Verify a one-time password | ❌ |
-| `POST` | `/api/auth/otp/resend` | Resend a one-time password | ❌ |
-| `POST` | `/api/auth/password/forgot` | Request a password reset | ❌ |
-| `POST` | `/api/auth/password/reset` | Reset password with OTP | ❌ |
-| `GET` | `/api/users/me` | Get the current user's profile | ✅ |
-| `PUT` | `/api/users/me` | Update the current user's profile | ✅ |
-| `POST` | `/api/users/me/password` | Change the current user's password | ✅ |
-| `POST` | `/api/users/me/deactivate` | Deactivate the current user's account | ✅ |
-| `GET` | `/api/technicians` | Discover technicians | ✅ |
-| `GET` | `/api/technicians/{id}` | Get technician details | ✅ |
-| `GET` | `/api/service-categories` | List service categories | ✅ |
+```text
+User
+ ├── Customer Profile        (planned)
+ └── Technician Profile      (foundation implemented)
 
-</div>
+Technician
+ ├── Service Categories      (implemented)
+ ├── Discovery                (implemented)
+ ├── Verification             (planned)
+ ├── Availability             (planned)
+ └── Reviews                  (planned)
 
-<details>
-<summary><strong>💻 Example — Login Request</strong></summary>
+Customer
+ ├── Addresses                (planned)
+ ├── Service Requests         (planned)
+ └── Reviews                  (planned)
+```
 
-<br/>
+The identity model (a `User` that can act as a customer or a technician) and the service-category structure are in place today. Everything downstream of "finding a technician" — requesting, assigning, and completing a job — is the next phase of the domain model.
+
+---
+
+## Authentication & Trust Model
+
+```text
+Registration
+     ↓
+Account Verification (OTP)
+     ↓
+Authentication
+     ↓
+Access Token + Refresh Token
+     ↓
+Authenticated API Requests
+     ↓
+Token Refresh / Logout
+```
+
+New accounts start unverified. **OTP verification** exists specifically because a marketplace connecting strangers in someone's home needs a baseline guarantee that an account belongs to a reachable, real person before it can act on the platform. Authenticated sessions use short-lived JWT access tokens paired with rotating refresh tokens, so a compromised token has a limited window of use without requiring server-side session storage.
+
+No secrets, keys, or credentials are included in this repository or documentation.
+
+---
+
+## Example API Workflow
+
+A representative slice of the API surface — not an exhaustive reference:
 
 ```http
+POST /api/auth/register
 POST /api/auth/login
-Content-Type: application/json
+POST /api/auth/refresh-token
+POST /api/auth/send-otp
+POST /api/auth/verify-otp
 
-{
-  "email": "customer@example.com",
-  "password": "SecurePassword123!"
-}
+GET  /api/technicians
+GET  /api/technicians/{id}
+GET  /api/service-categories
 ```
 
-**Response**
-
-```json
-{
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "refreshToken": "8f14e45fceea167a5a36dedd4bea2543...",
-  "expiresIn": 900
-}
-```
-
-</details>
+> Full interactive API documentation is available via Swagger/OpenAPI once the project is running locally (see [Getting Started](#getting-started)).
 
 ---
 
-## 🚨 Error Handling
+## Project Roadmap
 
-FixNow standardizes on **[RFC 9457 Problem Details](https://www.rfc-editor.org/rfc/rfc9457)** for every non-success HTTP response, so API consumers get a consistent, machine-readable error contract regardless of what failed.
-
-```json
-{
-  "type": "https://fixnow.dev/errors/validation-failed",
-  "title": "Validation Failed",
-  "status": 400,
-  "detail": "One or more validation errors occurred.",
-  "errors": {
-    "Email": ["Email is not a valid address."],
-    "Password": ["Password must be at least 8 characters."]
-  }
-}
-```
-
-| Layer | Mechanism | Behavior |
-|---|---|---|
-| **Domain / Application** | Result Pattern | Expected business failures (invalid OTP, duplicate email) return `Result.Failure(...)` — no exception thrown. |
-| **Validation Pipeline** | FluentValidation + MediatR Behavior | Rejects invalid requests before they reach the handler, returning field-level errors. |
-| **Unhandled Exceptions** | Global Exception Middleware | Caught centrally and converted into a safe, standardized Problem Details response — no stack traces leaked to clients. |
-
----
-
-## 🛡️ Security
-
-| Measure | Implementation |
-|---|---|
-| **Authentication** | JWT access tokens, signed and short-lived |
-| **Session Renewal** | Refresh token rotation on every use |
-| **Password Storage** | Hashed, never stored or logged in plain text |
-| **Account Verification** | OTP-based verification before full account access |
-| **Input Validation** | FluentValidation on every command/query, enforced by pipeline |
-| **Data Access Isolation** | Repository pattern prevents raw query leakage into business logic |
-| **Error Responses** | Problem Details responses never expose internal exception details |
-
----
-
-## 📐 Design Principles
-
-FixNow is built on a small set of principles applied consistently across every feature:
-
-- **SOLID** — every class has a single responsibility, and dependencies are injected against abstractions, not concretions.
-- **Clean Architecture** — dependencies point inward; the domain never depends on infrastructure.
-- **Domain-Driven Design** — the code models the business domain, not the database.
-- **CQRS** — reads and writes are modeled and optimized independently.
-- **Separation of Concerns** — HTTP, business logic, and persistence never mix in the same class.
-- **High Cohesion, Low Coupling** — features are self-contained; layers interact only through interfaces.
-
----
-
-## 📈 Scalability
-
-The architecture is designed so that scaling is a matter of adding capacity, not rewriting the system:
-
-- **Stateless authentication** (JWT) means any number of API instances can be load-balanced without a shared session store.
-- **CQRS separation** allows read workloads (technician discovery, service browsing) to be scaled, cached, or eventually served from read replicas independently of write workloads.
-- **Repository abstraction** means the persistence layer — PostgreSQL today — can be optimized, sharded, or partially replaced without touching business logic.
-- **Domain events** decouple side effects (notifications, downstream processing) from core transactions, making it straightforward to move them onto a message queue or background worker as load grows.
-- **Layered architecture** means new bounded contexts (Payments, Notifications) can be added as new features without destabilizing existing ones.
-
----
-
-## 🗺️ Future Roadmap
+FixNow is being built in phases, moving from identity and trust toward the full marketplace lifecycle.
 
 <details open>
-<summary><strong>🧑‍🔧 Marketplace Features</strong></summary>
+<summary><strong>Phase 1 — Identity & Trust</strong> (In Progress)</summary>
 
-- [ ] Appointments / Booking
-- [ ] Service Requests
-- [ ] Ratings
-- [ ] Reviews
+- [x] Registration
+- [x] Authentication (JWT + Refresh Tokens)
+- [x] OTP-based account verification
+- [ ] Technician onboarding
+- [ ] Technician verification workflows
+
+</details>
+
+<details open>
+<summary><strong>Phase 2 — Service Marketplace</strong> (In Progress)</summary>
+
+- [x] Service categories
+- [x] Technician discovery
+- [ ] Technician services
+- [ ] Customer service requests
+
+</details>
+
+<details>
+<summary><strong>Phase 3 — Job Lifecycle</strong> (Planned)</summary>
+
+- [ ] Technician assignment
+- [ ] Request acceptance
+- [ ] Job status lifecycle
+- [ ] Completion workflow
+
+</details>
+
+<details>
+<summary><strong>Phase 4 — Customer Experience</strong> (Planned)</summary>
+
+- [ ] Service tracking
 - [ ] Notifications
+- [ ] Reviews and ratings
+- [ ] Service history
+
+</details>
+
+<details>
+<summary><strong>Phase 5 — Platform Growth</strong> (Planned)</summary>
+
 - [ ] Payments
-- [ ] Admin Dashboard
-- [ ] Analytics
-
-</details>
-
-<details>
-<summary><strong>🔐 Identity & Access</strong></summary>
-
-- [ ] Two-Factor Authentication (2FA)
-- [ ] OAuth
-- [ ] Google Login
-- [ ] Facebook Login
-
-</details>
-
-<details>
-<summary><strong>⚡ Real-Time & Performance</strong></summary>
-
-- [ ] SignalR (real-time booking/status updates)
-- [ ] Caching
-- [ ] Redis
-- [ ] Background Jobs
-- [ ] Hangfire
-
-</details>
-
-<details>
-<summary><strong>🔎 Search & Location</strong></summary>
-
-- [ ] Search
-- [ ] Geo-location based discovery
-
-</details>
-
-<details>
-<summary><strong>☁️ Infrastructure & Deployment</strong></summary>
-
-- [ ] Docker
-- [ ] CI/CD Pipeline
-- [ ] Monitoring
-- [ ] OpenTelemetry
-- [ ] Azure Deployment
-- [ ] AWS Deployment
-- [ ] Microservices Decomposition
+- [ ] Advanced technician matching
+- [ ] Analytics and operational dashboards
+- [ ] Scalability improvements (caching, background jobs, deployment infrastructure)
 
 </details>
 
 ---
 
-## 🚀 Running the Project
+## What Makes This Project Interesting
 
-### Requirements
+FixNow is, at its core, an exercise in the hard parts of building a two-sided marketplace:
+
+- Modeling identity for two distinct user types sharing one account system
+- Building a trust system (verification, ratings) that a marketplace depends on to function at all
+- Structuring service-request workflows that will eventually involve state transitions and concurrency (a job being accepted, assigned, and completed)
+- Designing technician discovery in a way that can later support location-aware and demand-aware matching
+- Keeping the domain model clean enough that job lifecycle, notifications, and payments can be added as new capabilities rather than retrofits
+
+---
+
+## Repository Structure
+
+```text
+src/
+├── FixNow.Api/              # HTTP entry point, controllers, middleware
+├── FixNow.Application/      # Use cases, CQRS commands/queries, validation
+├── FixNow.Domain/           # Entities, value objects, domain events, business rules
+├── FixNow.Infrastructure/   # EF Core, PostgreSQL, JWT, OTP delivery
+└── FixNow.Contracts/        # Shared request/response contracts
+```
+
+> ℹ️ This structure reflects the project's Clean Architecture direction as described in this document. If your local copy of the repository differs, treat the actual solution structure as the source of truth.
+
+---
+
+## Getting Started
+
+### Prerequisites
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
-- [PostgreSQL](https://www.postgresql.org/download/) (local instance or container)
+- [PostgreSQL](https://www.postgresql.org/download/)
 
-### Installation
+### Setup
 
 ```bash
-# 1. Clone the repository
+# Clone
 git clone https://github.com/<your-username>/FixNow.git
 cd FixNow
 
-# 2. Restore dependencies
+# Restore dependencies
 dotnet restore
-```
 
-### Database
-
-```bash
-# Configure your connection string in:
-# src/FixNow.API/appsettings.Development.json
+# Configure the database connection
+# in src/FixNow.Api/appsettings.Development.json
 
 # Apply migrations
 dotnet ef database update \
   --project src/FixNow.Infrastructure \
-  --startup-project src/FixNow.API
+  --startup-project src/FixNow.Api
+
+# Run
+dotnet run --project src/FixNow.Api
 ```
 
-### Run
+Once running, API documentation is available via Swagger/OpenAPI at the application's `/swagger` endpoint.
 
-```bash
-dotnet run --project src/FixNow.API
+---
+
+## Configuration
+
+The application is configured through the standard ASP.NET Core configuration providers (`appsettings.json`, environment variables, or a `.env` file, depending on environment). Required configuration categories:
+
+| Category | Purpose |
+|---|---|
+| Database connection | PostgreSQL connection string |
+| JWT settings | Signing key, issuer, audience, token lifetimes |
+| OTP settings | OTP delivery/provider configuration |
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "<your-postgres-connection-string>"
+  },
+  "Jwt": {
+    "SigningKey": "<your-signing-key>",
+    "Issuer": "<your-issuer>",
+    "Audience": "<your-audience>"
+  }
+}
 ```
 
----
-
-## 📸 Screenshots
-
-> Screenshots and API demo captures will be added here as the platform's endpoints stabilize.
-
-<div align="center">
-
-| Auth Flow | Technician Discovery | API Response |
-|---|---|---|
-| *placeholder* | *placeholder* | *placeholder* |
-
-</div>
+No real secrets are stored in this repository.
 
 ---
 
-## 🤝 Contributing
+## Testing
 
-FixNow is built in the open, and contributions are welcome — especially from engineers who care about architecture as much as features.
-
-1. Fork the repository
-2. Create a feature branch — `git checkout -b feature/service-categories`
-3. Follow the existing layering (Domain → Application → Infrastructure → API)
-4. Commit with clear, descriptive messages
-5. Open a pull request describing the change and the reasoning behind it
-
-Please open an issue first for larger architectural changes so the approach can be discussed before implementation.
+Automated test coverage is part of the project's engineering roadmap and is being expanded alongside new features, prioritizing the identity, verification, and marketplace workflows described above.
 
 ---
 
-## 📜 License
+## Security
+
+| Mechanism | Status |
+|---|---|
+| Password hashing | ✅ In place |
+| JWT authentication | ✅ In place |
+| Refresh-token rotation | ✅ In place |
+| OTP-based account verification | ✅ In place |
+| Authorization / role-based access | ✅ In place |
+| Configuration via environment/secrets (not hardcoded) | ✅ In place |
+| Technician identity/document verification | 🔜 Planned |
+
+---
+
+## Development Philosophy
+
+FixNow is currently a personal engineering project, built with the discipline of a production codebase:
+
+- Business logic stays out of controllers.
+- Layer boundaries (API → Application → Domain → Infrastructure) are not bypassed for convenience.
+- Domain rules are made explicit rather than inferred from validation scattered across the codebase.
+- Infrastructure — the database, token issuance, OTP delivery — sits behind abstractions the Application layer owns.
+- New workflows are expected to bring tests, not just endpoints.
+- API changes aim to stay backward-compatible as the platform evolves.
+
+---
+
+## License
 
 This project is licensed under the **MIT License**.
 
 ---
 
-## 📬 Contact
-
 <div align="center">
 
-[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/<your-username>)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/<your-linkedin>)
-[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:your-email@example.com)
-
-</div>
-
----
-
-<div align="center">
-
-**Built with an obsession for backend engineering done right.**
-
-⭐ If this architecture resonates with you, consider starring the repository.
+**FixNow — fixing your home problems instantly.**
 
 </div>

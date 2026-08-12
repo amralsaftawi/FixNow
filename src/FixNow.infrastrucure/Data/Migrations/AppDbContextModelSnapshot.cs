@@ -760,6 +760,145 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.ToTable("ServiceRequestTimelines", (string)null);
                 });
 
+            modelBuilder.Entity("TechnicianExperience", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .IsUnicode(true)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .IsUnicode(true)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTimeOffset?>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("LastModifiedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .IsUnicode(true)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<DateTimeOffset>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("TechnicianProfileId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TechnicianProfileId");
+
+                    b.ToTable("TechnicianExperiences", (string)null);
+                });
+
+            modelBuilder.Entity("TechnicianPortfolioItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .IsUnicode(true)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("LastModifiedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<Guid>("TechnicianProfileId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .IsUnicode(true)
+                        .HasColumnType("character varying(150)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TechnicianProfileId");
+
+                    b.ToTable("TechnicianPortfolioItems", (string)null);
+                });
+
+            modelBuilder.Entity("TechnicianPortfolioMedia", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("LastModifiedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("MediaKey")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("TechnicianPortfolioItemId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TechnicianPortfolioItemId");
+
+                    b.ToTable("TechnicianPortfolioMedia", (string)null);
+                });
+
             modelBuilder.Entity("TechnicianProfile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -853,7 +992,10 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.HasIndex("TechnicianProfileId", "ServiceCategoryId")
                         .IsUnique();
 
-                    b.ToTable("TechnicianServices", (string)null);
+                    b.ToTable("TechnicianServices", t =>
+                        {
+                            t.HasCheckConstraint("CK_TechnicianServices_Price", "\"Price\" > 0");
+                        });
                 });
 
             modelBuilder.Entity("User", b =>
@@ -1292,12 +1434,102 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.Navigation("ServiceRequest");
                 });
 
+            modelBuilder.Entity("TechnicianExperience", b =>
+                {
+                    b.HasOne("TechnicianProfile", "TechnicianProfile")
+                        .WithMany("Experiences")
+                        .HasForeignKey("TechnicianProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("TechnicianProfile");
+                });
+
+            modelBuilder.Entity("TechnicianPortfolioItem", b =>
+                {
+                    b.HasOne("TechnicianProfile", "TechnicianProfile")
+                        .WithMany("PortfolioItems")
+                        .HasForeignKey("TechnicianProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("TechnicianProfile");
+                });
+
+            modelBuilder.Entity("TechnicianPortfolioMedia", b =>
+                {
+                    b.HasOne("TechnicianPortfolioItem", "TechnicianPortfolioItem")
+                        .WithMany("Media")
+                        .HasForeignKey("TechnicianPortfolioItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TechnicianPortfolioItem");
+                });
+
             modelBuilder.Entity("TechnicianProfile", b =>
                 {
                     b.HasOne("User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsOne("TechnicianAvailabilitySettings", "AvailabilitySettings", b1 =>
+                        {
+                            b1.Property<Guid>("TechnicianProfileId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("Status")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer")
+                                .HasDefaultValue(2);
+
+                            b1.Property<DateOnly?>("VacationEndDate")
+                                .HasColumnType("date");
+
+                            b1.Property<DateOnly?>("VacationStartDate")
+                                .HasColumnType("date");
+
+                            b1.HasKey("TechnicianProfileId");
+
+                            b1.ToTable("TechnicianProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TechnicianProfileId");
+
+                            b1.OwnsMany("TechnicianWorkingDay", "WorkingDays", b2 =>
+                                {
+                                    b2.Property<Guid>("TechnicianAvailabilitySettingsTechnicianProfileId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<int>("Id")
+                                        .ValueGeneratedOnAdd()
+                                        .HasColumnType("integer");
+
+                                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b2.Property<int>("Id"));
+
+                                    b2.Property<int>("Day")
+                                        .HasColumnType("integer");
+
+                                    b2.Property<TimeOnly>("EndTime")
+                                        .HasColumnType("time without time zone");
+
+                                    b2.Property<TimeOnly>("StartTime")
+                                        .HasColumnType("time without time zone");
+
+                                    b2.HasKey("TechnicianAvailabilitySettingsTechnicianProfileId", "Id");
+
+                                    b2.ToTable("TechnicianWorkingDay");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("TechnicianAvailabilitySettingsTechnicianProfileId");
+                                });
+
+                            b1.Navigation("WorkingDays");
+                        });
+
+                    b.Navigation("AvailabilitySettings")
                         .IsRequired();
 
                     b.Navigation("User");
@@ -1316,6 +1548,30 @@ namespace FixNow.infrastrucure.Data.Migrations
                         .HasForeignKey("TechnicianProfileId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.OwnsOne("Money", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("TechnicianServiceId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("integer")
+                                .HasColumnName("PriceCurrency");
+
+                            b1.Property<decimal>("Value")
+                                .HasPrecision(12, 2)
+                                .HasColumnType("numeric(12,2)")
+                                .HasColumnName("Price");
+
+                            b1.HasKey("TechnicianServiceId");
+
+                            b1.ToTable("TechnicianServices");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TechnicianServiceId");
+                        });
+
+                    b.Navigation("Price");
 
                     b.Navigation("ServiceCategory");
 
@@ -1496,8 +1752,17 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.Navigation("Timeline");
                 });
 
+            modelBuilder.Entity("TechnicianPortfolioItem", b =>
+                {
+                    b.Navigation("Media");
+                });
+
             modelBuilder.Entity("TechnicianProfile", b =>
                 {
+                    b.Navigation("Experiences");
+
+                    b.Navigation("PortfolioItems");
+
                     b.Navigation("Services");
                 });
 #pragma warning restore 612, 618

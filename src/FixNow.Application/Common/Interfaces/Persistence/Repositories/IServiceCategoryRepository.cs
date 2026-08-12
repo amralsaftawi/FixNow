@@ -11,6 +11,10 @@ public interface IServiceCategoryRepository
 
    Task<ServiceCategory?> GetByIdAsync( Guid id, CancellationToken cancellationToken = default);
 
+   Task<IReadOnlyCollection<ServiceCategory>> GetByIdsAsync(
+    IReadOnlyCollection<Guid> ids,
+    CancellationToken cancellationToken = default);
+
    Task<PagedResult<ServiceCategory>> GetPagedAsync(
     string? search,
     bool? isActive,
