@@ -281,6 +281,44 @@ public sealed class ServiceRequest : AuditableEntity
         return Result.Success;
     }
 
+    public Result<Success> Reassign()
+    {
+        if (Status != ServiceRequestStatus.Assigned)
+            return ServiceRequestErrors.InvalidStatusTransition;
+
+        _timeline.Add(
+            ServiceRequestTimeline.Create(
+                Guid.NewGuid(),
+                Id,
+                Status,
+                "Reassigned to another technician").Value);
+
+        AddDomainEvent(
+            new ServiceRequestReassignedDomainEvent(Id));
+
+        return Result.Success;
+    }
+
+    public Result<Success> Unassign()
+    {
+        if (Status != ServiceRequestStatus.Assigned)
+            return ServiceRequestErrors.InvalidStatusTransition;
+
+        Status = ServiceRequestStatus.SearchingTechnician;
+
+        _timeline.Add(
+            ServiceRequestTimeline.Create(
+                Guid.NewGuid(),
+                Id,
+                Status,
+                "Technician assignment removed").Value);
+
+        AddDomainEvent(
+            new ServiceRequestUnassignedDomainEvent(Id));
+
+        return Result.Success;
+    }
+
     public Result<Success> Accept()
     {
         if (Status == ServiceRequestStatus.Accepted)
@@ -303,6 +341,69 @@ public sealed class ServiceRequest : AuditableEntity
 
         AddDomainEvent(
             new ServiceRequestAcceptedDomainEvent(Id));
+
+        return Result.Success;
+    }
+
+    public Result<Success> MarkOnTheWay()
+    {
+        if (Status != ServiceRequestStatus.Accepted)
+            return ServiceRequestErrors.InvalidStatusTransition;
+
+        Status = ServiceRequestStatus.OnTheWay;
+
+        _timeline.Add(
+            ServiceRequestTimeline.Create(
+                Guid.NewGuid(),
+                Id,
+                Status,
+                "Technician is on the way").Value);
+
+        AddDomainEvent(
+            new ServiceRequestOnTheWayDomainEvent(Id));
+
+        return Result.Success;
+    }
+
+    public Result<Success> MarkArrived()
+    {
+        if (Status != ServiceRequestStatus.OnTheWay)
+            return ServiceRequestErrors.InvalidStatusTransition;
+
+        Status = ServiceRequestStatus.Arrived;
+
+        _timeline.Add(
+            ServiceRequestTimeline.Create(
+                Guid.NewGuid(),
+                Id,
+                Status,
+                "Technician arrived").Value);
+
+        AddDomainEvent(
+            new ServiceRequestArrivedDomainEvent(Id));
+
+        return Result.Success;
+    }
+
+    public Result<Success> MarkInProgress()
+    {
+        if (Status == ServiceRequestStatus.InProgress)
+            return ServiceRequestErrors.AlreadyInProgress;
+
+        if (Status != ServiceRequestStatus.Arrived)
+            return ServiceRequestErrors.InvalidStatusTransition;
+
+        Status = ServiceRequestStatus.InProgress;
+
+        _timeline.Add(
+            ServiceRequestTimeline.Create(
+                Guid.NewGuid(),
+                Id,
+                Status,
+                "Service visit started").Value);
+
+        AddDomainEvent(
+            new ServiceRequestInProgressDomainEvent(Id));
 
         return Result.Success;
     }

@@ -13,5 +13,9 @@ public enum ServiceRequestStatus
 
     Completed = 6,
 
-    Cancelled = 7
+    Cancelled = 7,
+
+    OnTheWay = 8,
+
+    Arrived = 9
 }

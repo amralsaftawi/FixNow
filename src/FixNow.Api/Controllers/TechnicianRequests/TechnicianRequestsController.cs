@@ -1,6 +1,7 @@
 using FixNow.Api.Mappings.TechnicianRequests;
 using FixNow.Application.Features.TechnicianRequests.Commands.AcceptServiceRequest;
 using FixNow.Application.Features.TechnicianRequests.Commands.RejectServiceRequest;
+using FixNow.Application.Features.TechnicianRequests.Commands.UpdateTechnicianArrivalStatus;
 using FixNow.Application.Features.TechnicianRequests.Queries.GetAvailableServiceRequests;
 using FixNow.Application.Features.TechnicianRequests.Queries.GetServiceRequestDetails;
 using FixNow.Application.Features.TechnicianRequests.Queries.GetTechnicianActiveJobs;
@@ -153,6 +154,31 @@ public sealed class TechnicianRequestsController(ISender sender) : ApiController
         var command = new RejectServiceRequestCommand(
             ServiceRequestId: requestId,
             Reason: request.Reason);
+
+        var result = await sender.Send(
+            command,
+            cancellationToken);
+
+        return result.Match(
+            _ => NoContent(),
+            Problem);
+    }
+
+    [HttpPut("{requestId:guid}/arrival-status")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> UpdateArrivalStatus(
+        Guid requestId,
+        [FromBody] UpdateTechnicianArrivalStatusRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new UpdateTechnicianArrivalStatusCommand(
+            ServiceRequestId: requestId,
+            Status: request.Status);
 
         var result = await sender.Send(
             command,

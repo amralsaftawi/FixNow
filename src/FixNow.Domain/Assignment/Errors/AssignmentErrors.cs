@@ -41,6 +41,16 @@ public static class AssignmentErrors
             "Assignment.InvalidStatusTransition",
             "The requested status transition is not allowed.");
 
+    public static readonly Error NotAssigned =
+        Error.Conflict(
+            "Assignment.NotAssigned",
+            "The service request is not currently assigned to a technician.");
+
+    public static readonly Error SameTechnician =
+        Error.Conflict(
+            "Assignment.SameTechnician",
+            "The service request is already assigned to this technician.");
+
     public static readonly Error RejectReasonRequired =
         Error.Validation(
             "Assignment.RejectReasonRequired",

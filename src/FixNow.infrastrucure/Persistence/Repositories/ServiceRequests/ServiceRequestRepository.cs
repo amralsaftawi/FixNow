@@ -141,11 +141,14 @@ public sealed class ServiceRequestRepository(AppDbContext dbContext)
         // it. Requiring the assignment to be Accepted (rather than merely
         // existing) is important: if this technician previously rejected the
         // request and another technician accepted it, the technician must
-        // never see it again.
+        // never see it again. OnTheWay and Arrived are working states too, so
+        // they remain in the active job list while the visit is ongoing.
         var query = _dbContext.ServiceRequests
             .AsNoTracking()
             .Where(serviceRequest =>
                 serviceRequest.Status == ServiceRequestStatus.Accepted
+                || serviceRequest.Status == ServiceRequestStatus.OnTheWay
+                || serviceRequest.Status == ServiceRequestStatus.Arrived
                 || serviceRequest.Status == ServiceRequestStatus.InProgress)
             .Where(serviceRequest => _dbContext.Assignments.Any(assignment =>
                 assignment.ServiceRequestId == serviceRequest.Id

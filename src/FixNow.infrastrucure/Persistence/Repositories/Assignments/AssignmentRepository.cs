@@ -30,4 +30,30 @@ public sealed class AssignmentRepository(AppDbContext dbContext)
                     && assignment.Status == AssignmentStatus.Pending,
                 cancellationToken);
     }
+
+    public Task<global::Assignment?> GetPendingByRequestAsync(
+        Guid serviceRequestId,
+        CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Assignments
+            .FirstOrDefaultAsync(
+                assignment =>
+                    assignment.ServiceRequestId == serviceRequestId
+                    && assignment.Status == AssignmentStatus.Pending,
+                cancellationToken);
+    }
+
+    public Task<global::Assignment?> GetAcceptedByRequestAndTechnicianAsync(
+        Guid serviceRequestId,
+        Guid technicianProfileId,
+        CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Assignments
+            .FirstOrDefaultAsync(
+                assignment =>
+                    assignment.ServiceRequestId == serviceRequestId
+                    && assignment.TechnicianProfileId == technicianProfileId
+                    && assignment.Status == AssignmentStatus.Accepted,
+                cancellationToken);
+    }
 }

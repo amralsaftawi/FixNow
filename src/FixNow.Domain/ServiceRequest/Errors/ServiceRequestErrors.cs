@@ -91,6 +91,11 @@ public static class ServiceRequestErrors
             "ServiceRequest.AlreadyAccepted",
             "The service request has already been accepted.");
 
+    public static readonly Error AlreadyInProgress =
+        Error.Conflict(
+            "ServiceRequest.AlreadyInProgress",
+            "The service request is already in progress.");
+
     public static readonly Error AlreadyCancelled =
         Error.Conflict(
             "ServiceRequest.AlreadyCancelled",
