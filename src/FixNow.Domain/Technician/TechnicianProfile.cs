@@ -17,9 +17,17 @@ public sealed class TechnicianProfile : AuditableEntity
 
     public bool IsProfileCompleted { get; private set; }
 
+    public decimal? Latitude { get; private set; }
+
+    public decimal? Longitude { get; private set; }
+
+    public int? CityId { get; private set; }
+
     // Navigation
 
     public User User { get; private set; } = null!;
+
+    public City? City { get; private set; }
 
     private readonly List<TechnicianService> _services = [];
 

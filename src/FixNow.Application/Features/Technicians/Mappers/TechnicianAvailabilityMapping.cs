@@ -5,6 +5,16 @@ namespace FixNow.Application.Features.TechnicianProfiles.Mappers;
 
 public static class TechnicianAvailabilityMapping
 {
+    public static TechnicianAvailabilityResponse ToTechnicianAvailabilityResponse(
+        this TechnicianProfile entity)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+
+        return new TechnicianAvailabilityResponse(
+            TechnicianProfileId: entity.Id,
+            Availability: entity.Availability);
+    }
+
     public static TechnicianAvailabilitySettingsResponse
         ToTechnicianAvailabilitySettingsResponse(
             this TechnicianProfile entity)

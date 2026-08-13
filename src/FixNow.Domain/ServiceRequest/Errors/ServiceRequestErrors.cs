@@ -36,6 +36,36 @@ public static class ServiceRequestErrors
             "ServiceRequest.InvalidScheduleDate",
             "Scheduled date must be in the future.");
 
+    public static readonly Error SameScheduleDate =
+        Error.Conflict(
+            "ServiceRequest.SameScheduleDate",
+            "The service request already has this preferred service time.");
+
+    public static readonly Error NotFound =
+        Error.NotFound(
+            "ServiceRequest.NotFound",
+            "The service request was not found.");
+
+    public static readonly Error SameCategory =
+        Error.Conflict(
+            "ServiceRequest.SameCategory",
+            "The service request already has this category.");
+
+    public static readonly Error ProblemTypeIdRequired =
+        Error.Validation(
+            "ServiceRequest.ProblemTypeIdRequired",
+            "Problem type id is required.");
+
+    public static readonly Error SameProblemType =
+        Error.Conflict(
+            "ServiceRequest.SameProblemType",
+            "The service request already has this problem type.");
+
+    public static readonly Error ProblemTypeIncompatible =
+        Error.Conflict(
+            "ServiceRequest.ProblemTypeIncompatible",
+            "The selected problem type is not valid for the service request's category.");
+
     public static readonly Error SameDescription =
         Error.Conflict(
             "ServiceRequest.SameDescription",
@@ -56,6 +86,11 @@ public static class ServiceRequestErrors
             "ServiceRequest.AlreadyCompleted",
             "The service request has already been completed.");
 
+    public static readonly Error AlreadyAccepted =
+        Error.Conflict(
+            "ServiceRequest.AlreadyAccepted",
+            "The service request has already been accepted.");
+
     public static readonly Error AlreadyCancelled =
         Error.Conflict(
             "ServiceRequest.AlreadyCancelled",
@@ -70,4 +105,14 @@ public static class ServiceRequestErrors
         Error.NotFound(
             "ServiceRequest.ImageNotFound",
             "The requested image was not found.");
+
+    public static readonly Error EstimatedCostRequired =
+        Error.Validation(
+            "ServiceRequest.EstimatedCostRequired",
+            "Estimated cost is required.");
+
+    public static readonly Error SameEstimatedCost =
+        Error.Conflict(
+            "ServiceRequest.SameEstimatedCost",
+            "The service request already has this estimated cost.");
 }

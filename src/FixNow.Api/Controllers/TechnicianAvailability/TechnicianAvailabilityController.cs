@@ -1,4 +1,5 @@
 using FixNow.Api.Mappings.TechnicianAvailability;
+using FixNow.Application.Features.TechnicianProfiles.Commands.UpdateTechnicianAvailability;
 using FixNow.Application.Features.TechnicianProfiles.Commands.UpdateTechnicianAvailabilitySettings;
 using FixNow.Application.Features.TechnicianProfiles.Queries.GetMyTechnicianAvailability;
 using FixNow.Contracts.Requests;
@@ -51,6 +52,27 @@ public sealed class TechnicianAvailabilityController(ISender sender) : ApiContro
                 .ToList(),
             VacationStartDate: request.VacationStartDate,
             VacationEndDate: request.VacationEndDate);
+
+        var result = await sender.Send(command, cancellationToken);
+
+        return result.Match(response => Ok(response.ToContractResponse()), Problem);
+    }
+
+    [HttpPut("status")]
+    [Authorize]
+    [ProducesResponseType(
+        typeof(FixNow.Contracts.Responses.TechnicianAvailabilityResponse),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> UpdateTechnicianAvailability(
+        [FromBody] UpdateTechnicianAvailabilityRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new UpdateTechnicianAvailabilityCommand(
+            Availability: request.Availability);
 
         var result = await sender.Send(command, cancellationToken);
 

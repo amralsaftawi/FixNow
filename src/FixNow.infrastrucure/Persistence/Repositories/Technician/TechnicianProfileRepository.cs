@@ -55,6 +55,17 @@ public sealed class TechnicianProfileRepository : ITechnicianProfileRepository
                 cancellationToken);
     }
 
+    public Task<global::TechnicianProfile?> GetByIdWithServicesAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        return _dbContext.TechnicianProfiles
+            .Include(profile => profile.Services)
+            .FirstOrDefaultAsync(
+                profile => profile.Id == id,
+                cancellationToken);
+    }
+
     public Task<global::TechnicianProfile?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return _dbContext.TechnicianProfiles

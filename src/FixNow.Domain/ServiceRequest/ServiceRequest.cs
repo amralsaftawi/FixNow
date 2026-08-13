@@ -6,9 +6,13 @@ public sealed class ServiceRequest : AuditableEntity
 
     public Guid ServiceCategoryId { get; private set; }
 
+    public Guid? ProblemTypeId { get; private set; }
+
     public string Description { get; private set; }
 
     public ServicePriority Priority { get; private set; }
+
+    public Money? EstimatedCost { get; private set; }
 
     public ServiceRequestStatus Status { get; private set; }
 
@@ -22,6 +26,8 @@ public sealed class ServiceRequest : AuditableEntity
 
     public CancellationReason? CancellationReason { get; private set; }
 
+    public uint Version { get; private set; }
+
     // Navigation
 
     public CustomerProfile CustomerProfile { get; private set; } = null!;
@@ -29,6 +35,8 @@ public sealed class ServiceRequest : AuditableEntity
     public Address Address { get; private set; } = null!;
 
     public ServiceCategory ServiceCategory { get; private set; } = null!;
+
+    public ProblemType? ProblemType { get; private set; }
 
     private readonly List<ServiceRequestImage> _images = [];
 
@@ -160,10 +168,68 @@ public sealed class ServiceRequest : AuditableEntity
         return Result.Success;
     }
 
+    public Result<Success> SetEstimatedCost(Money estimatedCost)
+    {
+        if (estimatedCost is null)
+            return ServiceRequestErrors.EstimatedCostRequired;
+
+        if (EstimatedCost == estimatedCost)
+            return ServiceRequestErrors.SameEstimatedCost;
+
+        EstimatedCost = estimatedCost;
+
+        AddDomainEvent(
+            new ServiceRequestEstimatedCostChangedDomainEvent(
+                Id,
+                estimatedCost.Value,
+                estimatedCost.Currency));
+
+        return Result.Success;
+    }
+
+    public Result<Success> ChangeServiceCategory(Guid serviceCategoryId)
+    {
+        if (serviceCategoryId == Guid.Empty)
+            return ServiceRequestErrors.ServiceCategoryIdRequired;
+
+        if (ServiceCategoryId == serviceCategoryId)
+            return ServiceRequestErrors.SameCategory;
+
+        ServiceCategoryId = serviceCategoryId;
+
+        AddDomainEvent(
+            new ServiceRequestCategoryChangedDomainEvent(
+                Id,
+                serviceCategoryId));
+
+        return Result.Success;
+    }
+
+    public Result<Success> ChangeProblemType(Guid problemTypeId)
+    {
+        if (problemTypeId == Guid.Empty)
+            return ServiceRequestErrors.ProblemTypeIdRequired;
+
+        if (ProblemTypeId == problemTypeId)
+            return ServiceRequestErrors.SameProblemType;
+
+        ProblemTypeId = problemTypeId;
+
+        AddDomainEvent(
+            new ServiceRequestProblemTypeChangedDomainEvent(
+                Id,
+                problemTypeId));
+
+        return Result.Success;
+    }
+
     public Result<Success> Schedule(DateTimeOffset scheduledAt)
     {
         if (scheduledAt <= DateTimeOffset.UtcNow)
             return ServiceRequestErrors.InvalidScheduleDate;
+
+        if (ScheduledAt == scheduledAt)
+            return ServiceRequestErrors.SameScheduleDate;
 
         ScheduledAt = scheduledAt;
 
@@ -191,6 +257,52 @@ public sealed class ServiceRequest : AuditableEntity
 
         AddDomainEvent(
             new ServiceRequestSearchingDomainEvent(Id));
+
+        return Result.Success;
+    }
+
+    public Result<Success> Assign()
+    {
+        if (Status != ServiceRequestStatus.SearchingTechnician)
+            return ServiceRequestErrors.InvalidStatusTransition;
+
+        Status = ServiceRequestStatus.Assigned;
+
+        _timeline.Add(
+            ServiceRequestTimeline.Create(
+                Guid.NewGuid(),
+                Id,
+                Status,
+                "Assigned to technician").Value);
+
+        AddDomainEvent(
+            new ServiceRequestAssignedDomainEvent(Id));
+
+        return Result.Success;
+    }
+
+    public Result<Success> Accept()
+    {
+        if (Status == ServiceRequestStatus.Accepted)
+            return ServiceRequestErrors.AlreadyAccepted;
+
+        if (Status != ServiceRequestStatus.SearchingTechnician
+            && Status != ServiceRequestStatus.Assigned)
+        {
+            return ServiceRequestErrors.InvalidStatusTransition;
+        }
+
+        Status = ServiceRequestStatus.Accepted;
+
+        _timeline.Add(
+            ServiceRequestTimeline.Create(
+                Guid.NewGuid(),
+                Id,
+                Status,
+                "Accepted by technician").Value);
+
+        AddDomainEvent(
+            new ServiceRequestAcceptedDomainEvent(Id));
 
         return Result.Success;
     }

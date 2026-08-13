@@ -90,6 +90,11 @@ public static class TechnicianProfileErrors
             "TechnicianProfile.ServiceNotFound",
             "The requested service was not found.");
 
+    public static readonly Error ServiceCategoryNotProvided =
+        Error.Conflict(
+            "TechnicianProfile.ServiceCategoryNotProvided",
+            "The technician does not provide the requested service category.");
+
     public static readonly Error ExperienceRequired =
         Error.Validation(
             "TechnicianProfile.ExperienceRequired",

@@ -397,6 +397,50 @@ namespace FixNow.infrastrucure.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ProblemType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("LastModifiedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(true)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid>("ServiceCategoryId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServiceCategoryId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("ProblemTypes", (string)null);
+                });
+
             modelBuilder.Entity("RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -652,6 +696,9 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.Property<int>("Priority")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("ProblemTypeId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTimeOffset>("RequestedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -664,11 +711,19 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AddressId");
 
                     b.HasIndex("CustomerProfileId");
+
+                    b.HasIndex("ProblemTypeId");
 
                     b.HasIndex("ServiceCategoryId");
 
@@ -913,6 +968,9 @@ namespace FixNow.infrastrucure.Data.Migrations
                         .IsUnicode(true)
                         .HasColumnType("character varying(1000)");
 
+                    b.Property<int?>("CityId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTimeOffset>("CreatedAtUtc")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
@@ -934,6 +992,14 @@ namespace FixNow.infrastrucure.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
+                    b.Property<decimal?>("Latitude")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("numeric(9,6)");
+
+                    b.Property<decimal?>("Longitude")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("numeric(9,6)");
+
                     b.Property<string>("NationalIdImageKey")
                         .HasMaxLength(500)
                         .IsUnicode(false)
@@ -949,6 +1015,8 @@ namespace FixNow.infrastrucure.Data.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CityId");
 
                     b.HasIndex("UserId")
                         .IsUnique()
@@ -1312,6 +1380,17 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.Navigation("CustomerProfile");
                 });
 
+            modelBuilder.Entity("ProblemType", b =>
+                {
+                    b.HasOne("ServiceCategory", "ServiceCategory")
+                        .WithMany()
+                        .HasForeignKey("ServiceCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ServiceCategory");
+                });
+
             modelBuilder.Entity("RefreshToken", b =>
                 {
                     b.HasOne("User", "User")
@@ -1399,15 +1478,46 @@ namespace FixNow.infrastrucure.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("ProblemType", "ProblemType")
+                        .WithMany()
+                        .HasForeignKey("ProblemTypeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("ServiceCategory", "ServiceCategory")
                         .WithMany()
                         .HasForeignKey("ServiceCategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.OwnsOne("Money", "EstimatedCost", b1 =>
+                        {
+                            b1.Property<Guid>("ServiceRequestId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("integer")
+                                .HasColumnName("EstimatedCostCurrency");
+
+                            b1.Property<decimal>("Value")
+                                .HasPrecision(12, 2)
+                                .HasColumnType("numeric(12,2)")
+                                .HasColumnName("EstimatedCost");
+
+                            b1.HasKey("ServiceRequestId");
+
+                            b1.ToTable("ServiceRequests");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ServiceRequestId");
+                        });
+
                     b.Navigation("Address");
 
                     b.Navigation("CustomerProfile");
+
+                    b.Navigation("EstimatedCost");
+
+                    b.Navigation("ProblemType");
 
                     b.Navigation("ServiceCategory");
                 });
@@ -1469,6 +1579,11 @@ namespace FixNow.infrastrucure.Data.Migrations
 
             modelBuilder.Entity("TechnicianProfile", b =>
                 {
+                    b.HasOne("City", "City")
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -1531,6 +1646,8 @@ namespace FixNow.infrastrucure.Data.Migrations
 
                     b.Navigation("AvailabilitySettings")
                         .IsRequired();
+
+                    b.Navigation("City");
 
                     b.Navigation("User");
                 });

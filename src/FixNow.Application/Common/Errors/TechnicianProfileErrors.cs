@@ -36,6 +36,11 @@ public static class TechnicianProfileErrors
             code: "TechnicianProfile.ServiceNotFound",
             description: "The requested service was not found.");
 
+    public static readonly Error ServiceCategoryNotProvided =
+        Error.Conflict(
+            code: "TechnicianProfile.ServiceCategoryNotProvided",
+            description: "The technician does not provide the requested service category.");
+
     public static readonly Error PortfolioItemNotFound =
         Error.NotFound(
             code: "TechnicianProfile.PortfolioItemNotFound",

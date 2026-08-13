@@ -4,7 +4,6 @@ using FixNow.Application.Features.TechnicianDiscovery.Queries.FindNearbyTechnici
 namespace FixNow.Application.Features.TechnicianDiscovery.Queries.FindNearbyTechnicians;
 
 public sealed record FindNearbyTechniciansQuery(
-    Guid ServiceCategoryId,
     decimal Latitude,
     decimal Longitude,
     double RadiusInKm,

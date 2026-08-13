@@ -16,6 +16,10 @@ public interface ITechnicianProfileRepository
         Guid userId,
         CancellationToken cancellationToken = default);
 
+    Task<TechnicianProfile?> GetByIdWithServicesAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
+
     Task<TechnicianProfile?> GetByUserIdWithPortfolioAsync(
         Guid userId,
         CancellationToken cancellationToken = default);

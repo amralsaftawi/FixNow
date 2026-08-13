@@ -7,10 +7,6 @@ public sealed class FindNearbyTechniciansQueryValidator
 {
     public FindNearbyTechniciansQueryValidator()
     {
-        RuleFor(x => x.ServiceCategoryId)
-            .NotEmpty()
-            .WithErrorCode("TechnicianDiscovery.ServiceCategoryId.Required");
-
         RuleFor(x => x.Latitude)
             .InclusiveBetween(-90m, 90m)
             .WithErrorCode("TechnicianDiscovery.Latitude.Invalid");

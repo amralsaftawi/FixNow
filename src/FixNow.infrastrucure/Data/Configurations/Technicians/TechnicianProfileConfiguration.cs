@@ -45,6 +45,15 @@ public sealed class TechnicianProfileConfiguration : IEntityTypeConfiguration<Te
         builder.Property(x => x.IsProfileCompleted)
             .HasDefaultValue(false);
 
+        builder.Property(x => x.Latitude)
+            .HasPrecision(9, 6);
+
+        builder.Property(x => x.Longitude)
+            .HasPrecision(9, 6);
+
+        builder.Property(x => x.CityId)
+            .IsRequired(false);
+
         builder.Property(x => x.CreatedAtUtc)
             .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
@@ -55,9 +64,16 @@ public sealed class TechnicianProfileConfiguration : IEntityTypeConfiguration<Te
             .IsUnique()
             .HasDatabaseName("IX_TechnicianProfiles_UserId");
 
+        builder.HasIndex(x => x.CityId);
+
         builder.HasOne(x => x.User)
             .WithMany()
             .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.City)
+            .WithMany()
+            .HasForeignKey(x => x.CityId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(x => x.Services)
