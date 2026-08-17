@@ -238,6 +238,46 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.ToTable("Countries", (string)null);
                 });
 
+            modelBuilder.Entity("CustomerPaymentMethod", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("CustomerProfileId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDefault")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("LastModifiedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerProfileId");
+
+                    b.ToTable("CustomerPaymentMethods", (string)null);
+                });
+
             modelBuilder.Entity("CustomerProfile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -284,6 +324,196 @@ namespace FixNow.infrastrucure.Data.Migrations
                         .HasDatabaseName("IX_CustomerProfiles_UserId");
 
                     b.ToTable("CustomerProfiles", (string)null);
+                });
+
+            modelBuilder.Entity("CustomerRating", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("CustomerProfileId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("JobId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("LastModifiedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("TechnicianProfileId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerProfileId");
+
+                    b.HasIndex("JobId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_CustomerRatings_JobId");
+
+                    b.HasIndex("TechnicianProfileId");
+
+                    b.ToTable("CustomerRatings", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_CustomerRatings_Rating", "\"Rating\" BETWEEN 1 AND 5");
+                        });
+                });
+
+            modelBuilder.Entity("Job", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("CompletionConfirmedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("LastModifiedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<Guid>("ServiceRequestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("TechnicianProfileId")
+                        .HasColumnType("uuid");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServiceRequestId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Jobs_ServiceRequestId");
+
+                    b.HasIndex("TechnicianProfileId");
+
+                    b.ToTable("Jobs", (string)null);
+                });
+
+            modelBuilder.Entity("JobAdditionalCharge", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .IsUnicode(true)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("JobId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("LastModifiedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobId");
+
+                    b.ToTable("JobAdditionalCharges", t =>
+                        {
+                            t.HasCheckConstraint("CK_JobAdditionalCharges_Amount", "\"Amount\" > 0");
+                        });
+                });
+
+            modelBuilder.Entity("JobTimeline", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .IsUnicode(true)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("JobId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("LastModifiedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<DateTimeOffset>("OccurredOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobId", "OccurredOn");
+
+                    b.ToTable("JobTimelines", (string)null);
                 });
 
             modelBuilder.Entity("OTPRecord", b =>
@@ -378,6 +608,10 @@ namespace FixNow.infrastrucure.Data.Migrations
 
                     b.Property<int>("PaymentMethod")
                         .HasColumnType("integer");
+
+                    b.Property<string>("ProviderReference")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -519,6 +753,11 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.Property<Guid>("CustomerProfileId")
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("IsHidden")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("text");
 
@@ -550,8 +789,61 @@ namespace FixNow.infrastrucure.Data.Migrations
 
                     b.ToTable("Reviews", null, t =>
                         {
-                            t.HasCheckConstraint("CK_Reviews_Rating", "\"Rating\" BETWEEN 1 AND 5");
+                            t.HasCheckConstraint("CK_Reviews_Rating", "\"Rating\" BETWEEN 0 AND 5");
                         });
+                });
+
+            modelBuilder.Entity("ReviewReport", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .IsUnicode(true)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("LastModifiedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<int>("Reason")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("ReporterUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ReviewId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReporterUserId");
+
+                    b.HasIndex("ReviewId")
+                        .HasDatabaseName("IX_ReviewReports_ReviewId");
+
+                    b.HasIndex("ReviewId", "ReporterUserId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_ReviewReports_ReviewId_ReporterUserId");
+
+                    b.ToTable("ReviewReports", (string)null);
                 });
 
             modelBuilder.Entity("Role", b =>
@@ -1025,6 +1317,59 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.ToTable("TechnicianProfiles", (string)null);
                 });
 
+            modelBuilder.Entity("TechnicianReport", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .IsUnicode(true)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("LastModifiedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<int>("Reason")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("ReporterUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("TechnicianProfileId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReporterUserId");
+
+                    b.HasIndex("TechnicianProfileId")
+                        .HasDatabaseName("IX_TechnicianReports_TechnicianProfileId");
+
+                    b.HasIndex("TechnicianProfileId", "ReporterUserId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_TechnicianReports_TechnicianProfileId_ReporterUserId");
+
+                    b.ToTable("TechnicianReports", (string)null);
+                });
+
             modelBuilder.Entity("TechnicianService", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1312,6 +1657,17 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.Navigation("Country");
                 });
 
+            modelBuilder.Entity("CustomerPaymentMethod", b =>
+                {
+                    b.HasOne("CustomerProfile", "CustomerProfile")
+                        .WithMany("PaymentMethods")
+                        .HasForeignKey("CustomerProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CustomerProfile");
+                });
+
             modelBuilder.Entity("CustomerProfile", b =>
                 {
                     b.HasOne("User", "User")
@@ -1321,6 +1677,147 @@ namespace FixNow.infrastrucure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CustomerRating", b =>
+                {
+                    b.HasOne("CustomerProfile", "CustomerProfile")
+                        .WithMany()
+                        .HasForeignKey("CustomerProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Job", "Job")
+                        .WithMany()
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TechnicianProfile", "TechnicianProfile")
+                        .WithMany()
+                        .HasForeignKey("TechnicianProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CustomerProfile");
+
+                    b.Navigation("Job");
+
+                    b.Navigation("TechnicianProfile");
+                });
+
+            modelBuilder.Entity("Job", b =>
+                {
+                    b.HasOne("ServiceRequest", "ServiceRequest")
+                        .WithOne()
+                        .HasForeignKey("Job", "ServiceRequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TechnicianProfile", "TechnicianProfile")
+                        .WithMany()
+                        .HasForeignKey("TechnicianProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsOne("Money", "InspectionFee", b1 =>
+                        {
+                            b1.Property<Guid>("JobId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("integer")
+                                .HasColumnName("InspectionFeeCurrency");
+
+                            b1.Property<decimal>("Value")
+                                .HasPrecision(12, 2)
+                                .HasColumnType("numeric(12,2)")
+                                .HasColumnName("InspectionFee");
+
+                            b1.HasKey("JobId");
+
+                            b1.ToTable("Jobs");
+
+                            b1.WithOwner()
+                                .HasForeignKey("JobId");
+                        });
+
+                    b.OwnsOne("Money", "ServicePrice", b1 =>
+                        {
+                            b1.Property<Guid>("JobId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("integer")
+                                .HasColumnName("ServicePriceCurrency");
+
+                            b1.Property<decimal>("Value")
+                                .HasPrecision(12, 2)
+                                .HasColumnType("numeric(12,2)")
+                                .HasColumnName("ServicePrice");
+
+                            b1.HasKey("JobId");
+
+                            b1.ToTable("Jobs");
+
+                            b1.WithOwner()
+                                .HasForeignKey("JobId");
+                        });
+
+                    b.Navigation("InspectionFee");
+
+                    b.Navigation("ServicePrice");
+
+                    b.Navigation("ServiceRequest");
+
+                    b.Navigation("TechnicianProfile");
+                });
+
+            modelBuilder.Entity("JobAdditionalCharge", b =>
+                {
+                    b.HasOne("Job", "Job")
+                        .WithMany("AdditionalCharges")
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsOne("Money", "Amount", b1 =>
+                        {
+                            b1.Property<Guid>("JobAdditionalChargeId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("integer")
+                                .HasColumnName("Currency");
+
+                            b1.Property<decimal>("Value")
+                                .HasPrecision(12, 2)
+                                .HasColumnType("numeric(12,2)")
+                                .HasColumnName("Amount");
+
+                            b1.HasKey("JobAdditionalChargeId");
+
+                            b1.ToTable("JobAdditionalCharges");
+
+                            b1.WithOwner()
+                                .HasForeignKey("JobAdditionalChargeId");
+                        });
+
+                    b.Navigation("Amount")
+                        .IsRequired();
+
+                    b.Navigation("Job");
+                });
+
+            modelBuilder.Entity("JobTimeline", b =>
+                {
+                    b.HasOne("Job", "Job")
+                        .WithMany("Timeline")
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Job");
                 });
 
             modelBuilder.Entity("OTPRecord", b =>
@@ -1437,8 +1934,49 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.Navigation("TechnicianProfile");
                 });
 
+            modelBuilder.Entity("ReviewReport", b =>
+                {
+                    b.HasOne("User", "ReporterUser")
+                        .WithMany()
+                        .HasForeignKey("ReporterUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Review", "Review")
+                        .WithMany()
+                        .HasForeignKey("ReviewId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ReporterUser");
+
+                    b.Navigation("Review");
+                });
+
             modelBuilder.Entity("ServiceCategory", b =>
                 {
+                    b.OwnsOne("Money", "InspectionFee", b1 =>
+                        {
+                            b1.Property<Guid>("ServiceCategoryId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("integer")
+                                .HasColumnName("InspectionFeeCurrency");
+
+                            b1.Property<decimal>("Value")
+                                .HasPrecision(12, 2)
+                                .HasColumnType("numeric(12,2)")
+                                .HasColumnName("InspectionFee");
+
+                            b1.HasKey("ServiceCategoryId");
+
+                            b1.ToTable("ServiceCategories");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ServiceCategoryId");
+                        });
+
                     b.OwnsOne("Money", "Price", b1 =>
                         {
                             b1.Property<Guid>("ServiceCategoryId")
@@ -1460,6 +1998,8 @@ namespace FixNow.infrastrucure.Data.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("ServiceCategoryId");
                         });
+
+                    b.Navigation("InspectionFee");
 
                     b.Navigation("Price");
                 });
@@ -1650,6 +2190,25 @@ namespace FixNow.infrastrucure.Data.Migrations
                     b.Navigation("City");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TechnicianReport", b =>
+                {
+                    b.HasOne("User", "ReporterUser")
+                        .WithMany()
+                        .HasForeignKey("ReporterUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TechnicianProfile", "TechnicianProfile")
+                        .WithMany()
+                        .HasForeignKey("TechnicianProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ReporterUser");
+
+                    b.Navigation("TechnicianProfile");
                 });
 
             modelBuilder.Entity("TechnicianService", b =>
@@ -1860,6 +2419,15 @@ namespace FixNow.infrastrucure.Data.Migrations
             modelBuilder.Entity("CustomerProfile", b =>
                 {
                     b.Navigation("Addresses");
+
+                    b.Navigation("PaymentMethods");
+                });
+
+            modelBuilder.Entity("Job", b =>
+                {
+                    b.Navigation("AdditionalCharges");
+
+                    b.Navigation("Timeline");
                 });
 
             modelBuilder.Entity("ServiceRequest", b =>

@@ -3,5 +3,5 @@ public static class RatingErrors
     public static readonly Error InvalidValue =
         Error.Validation(
             "Rating.InvalidValue",
-            "Rating must be between 1 and 5.");
+            "Rating must be between 0 and 5.");
 }

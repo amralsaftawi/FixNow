@@ -56,4 +56,29 @@ public sealed class AssignmentRepository(AppDbContext dbContext)
                     && assignment.Status == AssignmentStatus.Accepted,
                 cancellationToken);
     }
+
+    public Task<global::Assignment?> GetAcceptedByRequestAsync(
+        Guid serviceRequestId,
+        CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Assignments
+            .FirstOrDefaultAsync(
+                assignment =>
+                    assignment.ServiceRequestId == serviceRequestId
+                    && assignment.Status == AssignmentStatus.Accepted,
+                cancellationToken);
+    }
+
+    public Task<global::Assignment?> GetByRequestAndTechnicianAsync(
+        Guid serviceRequestId,
+        Guid technicianProfileId,
+        CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Assignments
+            .FirstOrDefaultAsync(
+                assignment =>
+                    assignment.ServiceRequestId == serviceRequestId
+                    && assignment.TechnicianProfileId == technicianProfileId,
+                cancellationToken);
+    }
 }

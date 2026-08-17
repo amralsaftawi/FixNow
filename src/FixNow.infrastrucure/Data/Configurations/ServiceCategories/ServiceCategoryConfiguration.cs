@@ -30,6 +30,16 @@ public sealed class ServiceCategoryConfiguration : IEntityTypeConfiguration<Serv
                 .HasColumnName("PriceCurrency")
                 .HasConversion<int>();
         });
+        builder.OwnsOne(x => x.InspectionFee, owned =>
+        {
+            owned.Property(m => m.Value)
+                .HasColumnName("InspectionFee")
+                .HasPrecision(12, 2);
+
+            owned.Property(m => m.Currency)
+                .HasColumnName("InspectionFeeCurrency")
+                .HasConversion<int>();
+        });
         builder.Property(x => x.IsActive)
             .HasDefaultValue(true);
 

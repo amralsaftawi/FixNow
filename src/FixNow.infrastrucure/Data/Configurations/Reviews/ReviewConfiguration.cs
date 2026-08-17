@@ -21,6 +21,9 @@ public sealed class ReviewConfiguration : IEntityTypeConfiguration<Review>
             .HasMaxLength(1000)
             .IsUnicode();
 
+        builder.Property(x => x.IsHidden)
+            .HasDefaultValue(false);
+
         builder.Property(x => x.CreatedAtUtc)
             .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
@@ -31,7 +34,7 @@ public sealed class ReviewConfiguration : IEntityTypeConfiguration<Review>
             .IsUnique()
             .HasDatabaseName("IX_Reviews_AssignmentId");
 
-        builder.ToTable(table => table.HasCheckConstraint("CK_Reviews_Rating", "\"Rating\" BETWEEN 1 AND 5"));
+        builder.ToTable(table => table.HasCheckConstraint("CK_Reviews_Rating", "\"Rating\" BETWEEN 0 AND 5"));
 
         builder.HasOne(x => x.Assignment)
             .WithMany()

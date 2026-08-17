@@ -408,6 +408,21 @@ public sealed class ServiceRequest : AuditableEntity
         return Result.Success;
     }
 
+    public Result<Success> RecordJobConversion()
+    {
+        _timeline.Add(
+            ServiceRequestTimeline.Create(
+                Guid.NewGuid(),
+                Id,
+                Status,
+                "Service request converted to a job").Value);
+
+        AddDomainEvent(
+            new ServiceRequestConvertedToJobDomainEvent(Id));
+
+        return Result.Success;
+    }
+
     public Result<Success> Complete()
     {
         if (Status == ServiceRequestStatus.Completed)

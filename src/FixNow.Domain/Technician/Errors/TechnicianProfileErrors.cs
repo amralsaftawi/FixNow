@@ -124,4 +124,14 @@ public static class TechnicianProfileErrors
         Error.NotFound(
             "TechnicianProfile.PortfolioItemNotFound",
             "The requested portfolio item was not found.");
+
+    public static readonly Error LatitudeInvalid =
+        Error.Validation(
+            "TechnicianProfile.LatitudeInvalid",
+            "Latitude must be between -90 and 90.");
+
+    public static readonly Error LongitudeInvalid =
+        Error.Validation(
+            "TechnicianProfile.LongitudeInvalid",
+            "Longitude must be between -180 and 180.");
 }

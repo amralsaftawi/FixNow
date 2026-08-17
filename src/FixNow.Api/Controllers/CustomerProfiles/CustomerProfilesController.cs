@@ -1,12 +1,18 @@
+using FixNow.Api.Mappings.CustomerRatings;
 using FixNow.Application.Features.CustomerProfiles.Commands.AddCustomerAddress;
+using FixNow.Application.Features.CustomerProfiles.Commands.AddCustomerPaymentMethod;
 using FixNow.Application.Features.CustomerProfiles.Commands.CreateCustomerProfile;
 using FixNow.Application.Features.CustomerProfiles.Commands.RemoveCustomerAddress;
+using FixNow.Application.Features.CustomerProfiles.Commands.RemoveCustomerPaymentMethod;
 using FixNow.Application.Features.CustomerProfiles.Commands.SetDefaultCustomerAddress;
+using FixNow.Application.Features.CustomerProfiles.Commands.SetDefaultCustomerPaymentMethod;
 using FixNow.Application.Features.CustomerProfiles.Commands.UpdateCustomerAddress;
 using FixNow.Application.Features.CustomerProfiles.Commands.UpdateCurrentCustomerLocation;
 using FixNow.Application.Features.CustomerProfiles.Dtos.Responses;
 using FixNow.Application.Features.CustomerProfiles.Queries.GetMyCurrentLocation;
 using FixNow.Application.Features.CustomerProfiles.Queries.GetMyCustomerProfile;
+using FixNow.Application.Features.CustomerRatings.Queries.GetCustomerRating;
+using FixNow.Application.Features.CustomerRatings.Queries.GetCustomerReviews;
 using FixNow.Contracts.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -167,6 +173,72 @@ public sealed class CustomerProfilesController(ISender sender) : ApiController
             Problem);
     }
 
+    [HttpPost("payment-methods")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> AddCustomerPaymentMethod(
+        [FromBody] AddCustomerPaymentMethodRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new AddCustomerPaymentMethodCommand(
+            Type: request.Type);
+
+        var result = await sender.Send(
+            command,
+            cancellationToken);
+
+        return result.Match(
+            _ => StatusCode(StatusCodes.Status201Created),
+            Problem);
+    }
+
+    [HttpDelete("payment-methods/{paymentMethodId:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> RemoveCustomerPaymentMethod(
+        Guid paymentMethodId,
+        CancellationToken cancellationToken)
+    {
+        var command = new RemoveCustomerPaymentMethodCommand(
+            paymentMethodId);
+
+        var result = await sender.Send(
+            command,
+            cancellationToken);
+
+        return result.Match(
+            _ => NoContent(),
+            Problem);
+    }
+
+    [HttpPut("payment-methods/{paymentMethodId:guid}/default")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> SetDefaultCustomerPaymentMethod(
+        Guid paymentMethodId,
+        CancellationToken cancellationToken)
+    {
+        var command = new SetDefaultCustomerPaymentMethodCommand(
+            paymentMethodId);
+
+        var result = await sender.Send(
+            command,
+            cancellationToken);
+
+        return result.Match(
+            _ => NoContent(),
+            Problem);
+    }
+
     [HttpGet("current-location")]
     [Authorize]
     [ProducesResponseType(
@@ -208,6 +280,54 @@ public sealed class CustomerProfilesController(ISender sender) : ApiController
 
         return result.Match(
             _ => NoContent(),
+            Problem);
+    }
+
+    [HttpGet("{customerId:guid}/rating")]
+    [Authorize]
+    [ProducesResponseType(
+        typeof(FixNow.Contracts.Responses.CustomerRatingResponse),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetCustomerRating(
+        Guid customerId,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new GetCustomerRatingQuery(
+            CustomerProfileId: customerId);
+
+        var result = await sender.Send(query, cancellationToken);
+
+        return result.Match(
+            response => Ok(response),
+            Problem);
+    }
+
+    [HttpGet("{customerId:guid}/reviews")]
+    [Authorize]
+    [ProducesResponseType(
+        typeof(FixNow.Contracts.Responses.CustomerReviewsResponse),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetCustomerReviews(
+        Guid customerId,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new GetCustomerReviewsQuery(
+            CustomerProfileId: customerId,
+            PageNumber: pageNumber,
+            PageSize: pageSize);
+
+        var result = await sender.Send(query, cancellationToken);
+
+        return result.Match(
+            response => Ok(response.ToContractResponse()),
             Problem);
     }
 }

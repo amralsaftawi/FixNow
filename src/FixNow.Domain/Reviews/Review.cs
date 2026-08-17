@@ -12,6 +12,8 @@ public sealed class Review : AuditableEntity
 
     public string? Comment { get; private set; }
 
+    public bool IsHidden { get; private set; }
+
     // Navigation
 
     public Assignment Assignment { get; private set; } = null!;
@@ -97,25 +99,55 @@ public sealed class Review : AuditableEntity
         return review;
     }
 
-public Result<Success> Update(Rating rating,  string? comment)
-{
-    comment = comment?.Trim();
+    public Result<Success> Update(Rating rating, string? comment)
+    {
+        comment = comment?.Trim();
 
-    if (comment?.Length > 1000)
-        return ReviewErrors.CommentTooLong;
+        if (comment?.Length > 1000)
+            return ReviewErrors.CommentTooLong;
 
-    if (Rating == rating && Comment == comment)
-        return ReviewErrors.NothingChanged;
+        if (Rating == rating && Comment == comment)
+            return ReviewErrors.NothingChanged;
 
-    Rating = rating;
+        Rating = rating;
 
-    Comment = comment;
+        Comment = comment;
 
- AddDomainEvent(
-    new ReviewUpdatedDomainEvent(
-        Id,
-        AssignmentId,
-        TechnicianProfileId));
-    return Result.Success;
-}
+        AddDomainEvent(
+            new ReviewUpdatedDomainEvent(
+                Id,
+                AssignmentId,
+                TechnicianProfileId));
+        return Result.Success;
+    }
+
+    public Result<Success> Hide()
+    {
+        if (IsHidden)
+            return ReviewErrors.AlreadyHidden;
+
+        IsHidden = true;
+
+        AddDomainEvent(
+            new ReviewHiddenDomainEvent(
+                Id,
+                AssignmentId,
+                TechnicianProfileId));
+        return Result.Success;
+    }
+
+    public Result<Success> Restore()
+    {
+        if (!IsHidden)
+            return ReviewErrors.AlreadyVisible;
+
+        IsHidden = false;
+
+        AddDomainEvent(
+            new ReviewRestoredDomainEvent(
+                Id,
+                AssignmentId,
+                TechnicianProfileId));
+        return Result.Success;
+    }
 }

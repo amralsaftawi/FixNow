@@ -26,6 +26,24 @@ public sealed class Money : ValueObject
         yield return Currency;
     }
 
+    public static Money? Sum(params Money?[] amounts)
+    {
+        var currency = amounts
+            .FirstOrDefault(amount => amount is not null)?
+            .Currency;
+
+        if (currency is null)
+            return null;
+
+        var total = amounts
+            .Where(amount => amount is not null)
+            .Sum(amount => amount!.Value);
+
+        return total <= 0
+            ? null
+            : new Money(total, currency.Value);
+    }
+
     public static implicit operator decimal(Money money)
         => money.Value;
 

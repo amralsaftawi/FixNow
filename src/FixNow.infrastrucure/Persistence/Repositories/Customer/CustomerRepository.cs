@@ -13,6 +13,7 @@ public sealed class CustomerRepository(AppDbContext dbContext) : ICustomerReposi
     {
         return await _dbContext.CustomerProfiles
             .Include(profile => profile.Addresses)
+            .Include(profile => profile.PaymentMethods)
             .FirstOrDefaultAsync(
                 profile => profile.UserId == userId,
                 cancellationToken);

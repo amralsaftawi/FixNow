@@ -1,4 +1,5 @@
 using FixNow.Application.Common.Models;
+using FixNow.Application.Features.Jobs.Queries.GetCustomerJobEta;
 
 namespace FixNow.Application.Common.Interfaces.Persistence.Repositories;
 
@@ -25,6 +26,10 @@ public interface ITechnicianProfileRepository
         CancellationToken cancellationToken = default);
 
     Task<TechnicianProfile?> GetByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
+
+    Task<TechnicianLocationDto?> GetLocationAsync(
         Guid id,
         CancellationToken cancellationToken = default);
 
@@ -57,4 +62,9 @@ public interface ITechnicianProfileRepository
         CancellationToken cancellationToken = default);
 
     void RemoveService(TechnicianService service);
+
+    Task<Money?> GetServicePriceByCategoryAsync(
+        Guid technicianProfileId,
+        Guid serviceCategoryId,
+        CancellationToken cancellationToken = default);
 }

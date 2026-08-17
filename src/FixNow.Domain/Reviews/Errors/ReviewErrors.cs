@@ -35,4 +35,39 @@ public static class ReviewErrors
         Error.Conflict(
             "Review.NothingChanged",
             "No changes were made.");
+
+    public static readonly Error AlreadyRated =
+        Error.Conflict(
+            "Review.AlreadyRated",
+            "A review for this job already exists.");
+
+    public static readonly Error JobNotCompleted =
+        Error.Conflict(
+            "Review.JobNotCompleted",
+            "Only completed jobs can be rated.");
+
+    public static readonly Error CommentRequired =
+        Error.Validation(
+            "Review.CommentRequired",
+            "Comment is required.");
+
+    public static readonly Error CommentEmpty =
+        Error.Validation(
+            "Review.CommentEmpty",
+            "Comment cannot be empty.");
+
+    public static readonly Error AlreadyHidden =
+        Error.Conflict(
+            "Review.AlreadyHidden",
+            "Review is already hidden.");
+
+    public static readonly Error AlreadyVisible =
+        Error.Conflict(
+            "Review.AlreadyVisible",
+            "Review is already visible.");
+
+    public static readonly Error NotFound =
+        Error.NotFound(
+            "Review.NotFound",
+            "Review was not found.");
 }

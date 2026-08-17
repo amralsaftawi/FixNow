@@ -12,6 +12,8 @@ public sealed class Payment : AuditableEntity
 
     public DateTimeOffset? PaidAt { get; private set; }
 
+    public string? ProviderReference { get; private set; }
+
     // Navigation
 
     public Assignment Assignment { get; private set; } = null!;
@@ -75,7 +77,7 @@ public sealed class Payment : AuditableEntity
         return payment;
     }
 
-public Result<Success> MarkAsPaid()
+public Result<Success> MarkAsPaid(string? providerReference = null)
 {
     if (Status == PaymentStatus.Paid)
         return PaymentErrors.AlreadyPaid;
@@ -86,6 +88,8 @@ public Result<Success> MarkAsPaid()
     Status = PaymentStatus.Paid;
 
     PaidAt = DateTimeOffset.UtcNow;
+
+    ProviderReference = providerReference;
 AddDomainEvent(
     new PaymentSucceededDomainEvent(
         Id,
@@ -132,6 +136,11 @@ public Result<Success> MarkAsRefunded()
         AssignmentId,
         CustomerProfileId,
         Amount));
-    return Result.Success;
-}
+        return Result.Success;
+    }
+
+    public void SetProviderReference(string? providerReference)
+    {
+        ProviderReference = providerReference;
+    }
 }

@@ -27,6 +27,21 @@ public static class CustomerProfileErrors
             "CustomerProfile.AddressNotFound",
             "Address was not found.");
 
+    public static readonly Error PaymentMethodRequired =
+        Error.Validation(
+            "CustomerProfile.PaymentMethodRequired",
+            "Payment method is required.");
+
+    public static readonly Error PaymentMethodAlreadyExists =
+        Error.Conflict(
+            "CustomerProfile.PaymentMethodAlreadyExists",
+            "Payment method already exists.");
+
+    public static readonly Error PaymentMethodNotFound =
+        Error.NotFound(
+            "CustomerProfile.PaymentMethodNotFound",
+            "Payment method was not found.");
+
     public static readonly Error LatitudeInvalid =
         Error.Validation(
             "CustomerProfile.LatitudeInvalid",
@@ -36,4 +51,9 @@ public static class CustomerProfileErrors
         Error.Validation(
             "CustomerProfile.LongitudeInvalid",
             "Longitude must be between -180 and 180.");
+
+    public static readonly Error NotFound =
+        Error.NotFound(
+            "CustomerProfile.NotFound",
+            "Customer profile was not found.");
 }

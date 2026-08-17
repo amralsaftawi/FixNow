@@ -61,6 +61,16 @@ public static class ServiceCategoryErrors
             "ServiceCategory.SamePrice",
             "The new price is the same as the current price.");
 
+    public static readonly Error InspectionFeeRequired =
+        Error.Validation(
+            "ServiceCategory.InspectionFeeRequired",
+            "Service category inspection fee is required.");
+
+    public static readonly Error SameInspectionFee =
+        Error.Conflict(
+            "ServiceCategory.SameInspectionFee",
+            "The new inspection fee is the same as the current inspection fee.");
+
     public static readonly Error NoIcon =
         Error.Conflict(
             "ServiceCategory.NoIcon",

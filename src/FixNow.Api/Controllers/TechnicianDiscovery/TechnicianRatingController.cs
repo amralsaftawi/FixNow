@@ -1,5 +1,6 @@
 using FixNow.Api.Mappings.TechnicianDiscovery;
 using FixNow.Application.Features.TechnicianDiscovery.Queries.FilterTechniciansByRating;
+using FixNow.Application.Features.TechnicianDiscovery.Queries.GetTechnicianRating;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,28 @@ public sealed class TechnicianRatingController(ISender sender) : ApiController
             MinimumRating: minimumRating,
             PageNumber: pageNumber,
             PageSize: pageSize);
+
+        var result = await sender.Send(query, cancellationToken);
+
+        return result.Match(
+            response => Ok(response.ToContractResponse()),
+            Problem);
+    }
+
+    [HttpGet("/api/technician-discovery/technicians/{technicianProfileId:guid}/rating")]
+    [Authorize]
+    [ProducesResponseType(
+        typeof(FixNow.Contracts.Responses.TechnicianRatingResponse),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetTechnicianRating(
+        Guid technicianProfileId,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new GetTechnicianRatingQuery(
+            TechnicianProfileId: technicianProfileId);
 
         var result = await sender.Send(query, cancellationToken);
 

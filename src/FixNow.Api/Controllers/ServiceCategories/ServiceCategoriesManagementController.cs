@@ -1,4 +1,5 @@
 using FixNow.Application.Features.ServiceCategories.Commands.ActivateServiceCategory;
+using FixNow.Application.Features.ServiceCategories.Commands.ConfigureServiceCategoryInspectionFee;
 using FixNow.Application.Features.ServiceCategories.Commands.ConfigureServiceCategoryPricing;
 using FixNow.Application.Features.ServiceCategories.Commands.CreateServiceCategory;
 using FixNow.Application.Features.ServiceCategories.Commands.DeactivateServiceCategory;
@@ -116,6 +117,32 @@ public sealed class ServiceCategoriesManagementController(ISender sender) : ApiC
         CancellationToken cancellationToken = default)
     {
         var command = new ConfigureServiceCategoryPricingCommand(
+            ServiceCategoryId: serviceCategoryId,
+            Amount: request.Amount,
+            Currency: request.Currency);
+
+        var result = await sender.Send(
+            command,
+            cancellationToken);
+
+        return result.Match(
+            _ => NoContent(),
+            Problem);
+    }
+
+    [HttpPut("{serviceCategoryId:guid}/inspection-fee")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> ConfigureServiceCategoryInspectionFee(
+        Guid serviceCategoryId,
+        [FromBody] ConfigureServiceCategoryInspectionFeeRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new ConfigureServiceCategoryInspectionFeeCommand(
             ServiceCategoryId: serviceCategoryId,
             Amount: request.Amount,
             Currency: request.Currency);

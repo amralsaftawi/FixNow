@@ -16,6 +16,7 @@ public static class GetServiceCategoryByIdMapping
             IconKey: entity.IconKey,
             DisplayOrder: entity.DisplayOrder,
             Price: entity.Price,
+            InspectionFee: entity.InspectionFee,
             IsActive: entity.IsActive);
     }
 }

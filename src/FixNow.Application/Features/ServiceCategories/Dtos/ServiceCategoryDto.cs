@@ -7,4 +7,5 @@ public sealed record ServiceCategoryDto(
     string? IconKey,
     int DisplayOrder,
     Money? Price,
+    Money? InspectionFee,
     bool IsActive);

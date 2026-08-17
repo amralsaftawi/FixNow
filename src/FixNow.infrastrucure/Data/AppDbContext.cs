@@ -13,6 +13,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     public DbSet<CustomerProfile> CustomerProfiles => Set<CustomerProfile>();
     public DbSet<Address> Addresses => Set<Address>();
+    public DbSet<CustomerPaymentMethod> CustomerPaymentMethods => Set<CustomerPaymentMethod>();
 
     public DbSet<ServiceCategory> ServiceCategories => Set<ServiceCategory>();
     public DbSet<ProblemType> ProblemTypes => Set<ProblemType>();
@@ -35,6 +36,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<ServiceRequestTimeline> ServiceRequestTimelines => Set<ServiceRequestTimeline>();
 
     public DbSet<Assignment> Assignments => Set<Assignment>();
+
+    public DbSet<Job> Jobs => Set<Job>();
+
+    public DbSet<JobTimeline> JobTimelines => Set<JobTimeline>();
+
+    public DbSet<JobAdditionalCharge> JobAdditionalCharges => Set<JobAdditionalCharge>();
+
+    public DbSet<CustomerRating> CustomerRatings => Set<CustomerRating>();
+
+    public DbSet<ReviewReport> ReviewReports => Set<ReviewReport>();
+
+    public DbSet<TechnicianReport> TechnicianReports => Set<TechnicianReport>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

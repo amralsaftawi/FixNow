@@ -55,4 +55,9 @@ public static class AssignmentErrors
         Error.Validation(
             "Assignment.RejectReasonRequired",
             "Reject reason is required.");
+
+    public static readonly Error NotFound =
+        Error.NotFound(
+            "Assignment.NotFound",
+            "The assignment was not found.");
 }

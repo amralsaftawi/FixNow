@@ -10,7 +10,13 @@ using FixNow.Infrastructure.Persistence.Repositories.Customer;
 using FixNow.Infrastructure.Persistence.Repositories.Geographic;
 using FixNow.Infrastructure.Persistence.Repositories.ServiceRequests;
 using FixNow.Infrastructure.Persistence.Repositories.Assignments;
+using FixNow.Infrastructure.Persistence.Repositories.Jobs;
+using FixNow.Infrastructure.Persistence.Repositories.Payment;
 using FixNow.Infrastructure.Persistence.Repositories.ProblemTypes;
+using FixNow.Infrastructure.Persistence.Repositories.Reviews;
+using FixNow.Infrastructure.Persistence.Repositories.ReviewReports;
+using FixNow.Infrastructure.Persistence.Repositories.TechnicianReports;
+using FixNow.Infrastructure.Persistence.Repositories.CustomerRatings;
 using FixNow.Infrastructure.Services;
 using FixNow.Infrastructure.UnitOfWork;
 using FixNow.Application.Features.Identity.Commands.VerifyOtp.Processors;
@@ -20,6 +26,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using FixNow.Application.Common.Interfaces.Authentication;
+using FixNow.Application.Common.Interfaces.Services;
 using FixNow.Application.Common.Interfaces.Storage;
 using FixNow.Infrastructure.Storage;
 using Microsoft.Extensions.Options;
@@ -54,6 +61,12 @@ public static class DependencyInjection
         services.AddScoped<IAreaRepository, AreaRepository>();
         services.AddScoped<IServiceRequestRepository, ServiceRequestRepository>();
         services.AddScoped<IAssignmentRepository, AssignmentRepository>();
+        services.AddScoped<IJobRepository, JobRepository>();
+        services.AddScoped<IPaymentRepository, PaymentRepository>();
+        services.AddScoped<IReviewRepository, ReviewRepository>();
+        services.AddScoped<IReviewReportRepository, ReviewReportRepository>();
+        services.AddScoped<ITechnicianReportRepository, TechnicianReportRepository>();
+        services.AddScoped<ICustomerRatingRepository, CustomerRatingRepository>();
         services.AddScoped<IProblemTypeRepository, ProblemTypeRepository>();
         services.AddScoped<global::IUnitOfWork, global::FixNow.Infrastructure.UnitOfWork.UnitOfWork>();
 
@@ -99,8 +112,19 @@ public static class DependencyInjection
 
         services.AddScoped<IFileStorage, CloudinaryFileStorage>();
 
+        services.AddScoped<IOnlinePaymentProvider, StubOnlinePaymentProvider>();
+
+        services.AddScoped<IOnlinePaymentConfirmationService, StubOnlinePaymentConfirmationService>();
+
+        services.AddScoped<IOnlinePaymentFailureService, StubOnlinePaymentFailureService>();
+
         services.Configure<CloudinaryOptions>(
             configuration.GetSection(CloudinaryOptions.SectionName));
+
+        services.Configure<EtaOptions>(
+            configuration.GetSection(EtaOptions.SectionName));
+
+        services.AddScoped<IEstimatedArrivalTimeService, EstimatedArrivalTimeService>();
 
         services.AddSingleton(provider =>
         {

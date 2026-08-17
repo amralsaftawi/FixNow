@@ -1,4 +1,6 @@
 using FixNow.Application.Common.Models;
+using FixNow.Application.Features.Jobs.Queries.GetCustomerJobEta;
+using FixNow.Application.Features.ServiceRequests.Queries.GetBaseServicePrice;
 using FixNow.Application.Features.TechnicianRequests.Queries.GetAvailableServiceRequests;
 using FixNow.Application.Features.TechnicianRequests.Queries.GetServiceRequestDetails;
 using FixNow.Application.Features.TechnicianRequests.Queries.GetTechnicianActiveJobs;
@@ -14,6 +16,16 @@ public interface IServiceRequestRepository
 
     Task<ServiceRequest?> GetByIdAsync(
         Guid id,
+        CancellationToken cancellationToken = default);
+
+    Task<ServiceRequestDestinationDto?> GetDestinationForCustomerAsync(
+        Guid serviceRequestId,
+        Guid customerProfileId,
+        CancellationToken cancellationToken = default);
+
+    Task<ServiceRequestBasePriceDto?> GetBaseServicePriceAsync(
+        Guid serviceRequestId,
+        Guid customerProfileId,
         CancellationToken cancellationToken = default);
 
     void Update(ServiceRequest serviceRequest);

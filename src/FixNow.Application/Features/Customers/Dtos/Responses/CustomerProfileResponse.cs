@@ -4,4 +4,5 @@ public sealed record CustomerProfileResponse(
     Guid CustomerProfileId,
     Guid UserId,
     DateTimeOffset RegisteredAt,
-    IReadOnlyCollection<AddressResponse> Addresses);
+    IReadOnlyCollection<AddressResponse> Addresses,
+    IReadOnlyCollection<PaymentMethodResponse> PaymentMethods);

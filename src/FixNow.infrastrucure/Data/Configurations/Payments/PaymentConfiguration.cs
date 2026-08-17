@@ -27,6 +27,9 @@ public sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
             .HasConversion<int>();
         builder.Property(x => x.PaidAt);
 
+        builder.Property(x => x.ProviderReference)
+            .HasMaxLength(500);
+
         builder.Property(x => x.CreatedAtUtc)
             .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
@@ -35,6 +38,8 @@ public sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
 
         builder.HasIndex(x => new { x.Status, x.CreatedAtUtc })
             .HasDatabaseName("IX_Payments_Status_CreatedAtUtc");
+
+        builder.HasIndex(x => x.AssignmentId);
 
         builder.HasOne(x => x.Assignment)
             .WithMany()

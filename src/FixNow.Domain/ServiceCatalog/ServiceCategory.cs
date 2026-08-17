@@ -11,6 +11,8 @@ public sealed class ServiceCategory : AuditableEntity
 
     public Money? Price { get; private set; }
 
+    public Money? InspectionFee { get; private set; }
+
     public bool IsActive { get; private set; }
 
 #pragma warning disable CS8618
@@ -149,6 +151,19 @@ public sealed class ServiceCategory : AuditableEntity
             return ServiceCategoryErrors.SamePrice;
 
         Price = price;
+
+        return Result.Success;
+    }
+
+    public Result<Success> SetInspectionFee(Money inspectionFee)
+    {
+        if (inspectionFee is null)
+            return ServiceCategoryErrors.InspectionFeeRequired;
+
+        if (InspectionFee == inspectionFee)
+            return ServiceCategoryErrors.SameInspectionFee;
+
+        InspectionFee = inspectionFee;
 
         return Result.Success;
     }

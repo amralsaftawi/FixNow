@@ -1,5 +1,6 @@
 using FixNow.Application.Common.Interfaces.Persistence.Repositories;
 using FixNow.Application.Common.Models;
+using FixNow.Application.Features.Jobs.Queries.GetCustomerJobEta;
 using Microsoft.EntityFrameworkCore;
 
 namespace FixNow.Infrastructure.Persistence.Repositories.Technician;
@@ -72,6 +73,17 @@ public sealed class TechnicianProfileRepository : ITechnicianProfileRepository
             .FirstOrDefaultAsync(
                 profile => profile.Id == id,
                 cancellationToken);
+    }
+
+    public Task<TechnicianLocationDto?> GetLocationAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return _dbContext.TechnicianProfiles
+            .AsNoTracking()
+            .Where(profile => profile.Id == id)
+            .Select(profile => new TechnicianLocationDto(
+                Latitude: profile.Latitude,
+                Longitude: profile.Longitude))
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task<PagedResult<global::TechnicianProfile>> GetPagedAsync(
@@ -155,5 +167,19 @@ public sealed class TechnicianProfileRepository : ITechnicianProfileRepository
     public void RemoveService(global::TechnicianService service)
     {
         _dbContext.TechnicianServices.Remove(service);
+    }
+
+    public Task<Money?> GetServicePriceByCategoryAsync(
+        Guid technicianProfileId,
+        Guid serviceCategoryId,
+        CancellationToken cancellationToken = default)
+    {
+        return _dbContext.TechnicianServices
+            .AsNoTracking()
+            .Where(service =>
+                service.TechnicianProfileId == technicianProfileId
+                && service.ServiceCategoryId == serviceCategoryId)
+            .Select(service => service.Price)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 }

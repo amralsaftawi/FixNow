@@ -55,4 +55,12 @@ public interface ITechnicianDiscoveryRepository
     Task<TechnicianVerificationStatusResponse?> GetVerificationStatusByTechnicianAsync(
         Guid technicianProfileId,
         CancellationToken cancellationToken = default);
+
+    Task<RatingSummary?> GetRatingSummaryByTechnicianAsync(
+        Guid technicianProfileId,
+        CancellationToken cancellationToken = default);
+
+    Task<bool> ExistsByTechnicianIdAsync(
+        Guid technicianProfileId,
+        CancellationToken cancellationToken = default);
 }

@@ -16,6 +16,11 @@ public sealed class CustomerProfile : AuditableEntity
     public IReadOnlyCollection<Address> Addresses =>
         _addresses.AsReadOnly();
 
+    private readonly List<CustomerPaymentMethod> _paymentMethods = [];
+
+    public IReadOnlyCollection<CustomerPaymentMethod> PaymentMethods =>
+        _paymentMethods.AsReadOnly();
+
     // Navigation
 
     public User User { get; private set; } = null!;
@@ -109,6 +114,63 @@ public sealed class CustomerProfile : AuditableEntity
             new CustomerDefaultAddressChangedDomainEvent(
                 Id,
                 addressId));
+
+        return Result.Success;
+    }
+
+    public Result<Success> AddPaymentMethod(CustomerPaymentMethod paymentMethod)
+    {
+        if (paymentMethod is null)
+            return CustomerProfileErrors.PaymentMethodRequired;
+
+        if (_paymentMethods.Any(p => p.Id == paymentMethod.Id))
+            return CustomerProfileErrors.PaymentMethodAlreadyExists;
+
+        _paymentMethods.Add(paymentMethod);
+
+        AddDomainEvent(
+            new CustomerPaymentMethodAddedDomainEvent(
+                Id,
+                paymentMethod.Id));
+
+        return Result.Success;
+    }
+
+    public Result<Success> RemovePaymentMethod(Guid paymentMethodId)
+    {
+        var paymentMethod = _paymentMethods.FirstOrDefault(p => p.Id == paymentMethodId);
+
+        if (paymentMethod is null)
+            return CustomerProfileErrors.PaymentMethodNotFound;
+
+        _paymentMethods.Remove(paymentMethod);
+
+        AddDomainEvent(
+            new CustomerPaymentMethodRemovedDomainEvent(
+                Id,
+                paymentMethodId));
+
+        return Result.Success;
+    }
+
+    public Result<Success> SetDefaultPaymentMethod(Guid paymentMethodId)
+    {
+        var paymentMethod = _paymentMethods.FirstOrDefault(p => p.Id == paymentMethodId);
+
+        if (paymentMethod is null)
+            return CustomerProfileErrors.PaymentMethodNotFound;
+
+        foreach (var item in _paymentMethods.Where(p => p.IsDefault))
+        {
+            item.RemoveDefault();
+        }
+
+        paymentMethod.SetAsDefault();
+
+        AddDomainEvent(
+            new CustomerDefaultPaymentMethodChangedDomainEvent(
+                Id,
+                paymentMethodId));
 
         return Result.Success;
     }

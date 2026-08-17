@@ -357,6 +357,53 @@ public sealed class TechnicianDiscoveryRepository : ITechnicianDiscoveryReposito
             .FirstOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<RatingSummary?> GetRatingSummaryByTechnicianAsync(
+        Guid technicianProfileId,
+        CancellationToken cancellationToken = default)
+    {
+        var isEligible = await _dbContext.TechnicianProfiles
+            .AsNoTracking()
+            .AnyAsync(profile =>
+                profile.Id == technicianProfileId
+                && profile.User.AccountStatus == AccountStatus.Active
+                && profile.VerificationStatus == VerificationStatus.Verified,
+                cancellationToken);
+
+        if (!isEligible)
+        {
+            return null;
+        }
+
+        var result = await _dbContext.Reviews
+            .AsNoTracking()
+            .Where(review =>
+                review.TechnicianProfileId == technicianProfileId
+                && review.Rating > 0)
+            .Select(review => new { review.Rating })
+            .GroupBy(_ => 1)
+            .Select(group => new RatingSummary(
+                AverageRating: group.Average(r => r.Rating),
+                RatingCount: group.Count()))
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return result ?? new RatingSummary(
+            AverageRating: 0,
+            RatingCount: 0);
+    }
+
+    public async Task<bool> ExistsByTechnicianIdAsync(
+        Guid technicianProfileId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.TechnicianProfiles
+            .AsNoTracking()
+            .AnyAsync(profile =>
+                profile.Id == technicianProfileId
+                && profile.User.AccountStatus == AccountStatus.Active
+                && profile.VerificationStatus == VerificationStatus.Verified,
+                cancellationToken);
+    }
+
     private static RatedTechnicianDto ToDto(RatedTechnicianProjection row)
         => new(
             TechnicianProfileId: row.TechnicianProfileId,

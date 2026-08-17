@@ -9,7 +9,7 @@ public sealed class Rating : ValueObject
 
     public static Result<Rating> Create(int value)
     {
-        if (value < 1 || value > 5)
+        if (value < 0 || value > 5)
             return RatingErrors.InvalidValue;
 
         return new Rating(value);

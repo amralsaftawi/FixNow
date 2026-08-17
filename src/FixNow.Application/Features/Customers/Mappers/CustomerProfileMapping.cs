@@ -16,6 +16,9 @@ public static class CustomerProfileMapping
             RegisteredAt: entity.RegisteredAt,
             Addresses: entity.Addresses
                 .Select(ToAddressResponse)
+                .ToList(),
+            PaymentMethods: entity.PaymentMethods
+                .Select(ToPaymentMethodResponse)
                 .ToList());
     }
 
@@ -38,5 +41,16 @@ public static class CustomerProfileMapping
             Longitude: address.Longitude,
             FullAddress: address.FullAddress,
             IsDefault: address.IsDefault);
+    }
+
+    public static PaymentMethodResponse ToPaymentMethodResponse(
+        this CustomerPaymentMethod paymentMethod)
+    {
+        ArgumentNullException.ThrowIfNull(paymentMethod);
+
+        return new PaymentMethodResponse(
+            PaymentMethodId: paymentMethod.Id,
+            Type: paymentMethod.Type,
+            IsDefault: paymentMethod.IsDefault);
     }
 }

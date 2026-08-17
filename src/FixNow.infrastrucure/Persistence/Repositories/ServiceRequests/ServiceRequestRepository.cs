@@ -1,5 +1,7 @@
 using FixNow.Application.Common.Interfaces.Persistence.Repositories;
 using FixNow.Application.Common.Models;
+using FixNow.Application.Features.Jobs.Queries.GetCustomerJobEta;
+using FixNow.Application.Features.ServiceRequests.Queries.GetBaseServicePrice;
 using FixNow.Application.Features.TechnicianRequests.Queries.GetAvailableServiceRequests;
 using FixNow.Application.Features.TechnicianRequests.Queries.GetServiceRequestDetails;
 using FixNow.Application.Features.TechnicianRequests.Queries.GetTechnicianActiveJobs;
@@ -30,6 +32,49 @@ public sealed class ServiceRequestRepository(AppDbContext dbContext)
             .FirstOrDefaultAsync(
                 serviceRequest => serviceRequest.Id == id,
                 cancellationToken);
+    }
+
+    public Task<ServiceRequestDestinationDto?> GetDestinationForCustomerAsync(
+        Guid serviceRequestId,
+        Guid customerProfileId,
+        CancellationToken cancellationToken = default)
+    {
+        // Ownership is applied inside the query so an un-owned service
+        // request resolves to the same null outcome as a non-existent one,
+        // preventing IDOR/BOLA-style probing.
+        return _dbContext.ServiceRequests
+            .AsNoTracking()
+            .Where(serviceRequest =>
+                serviceRequest.Id == serviceRequestId
+                && serviceRequest.CustomerProfileId == customerProfileId)
+            .Select(serviceRequest => new ServiceRequestDestinationDto(
+                Latitude: serviceRequest.Address.Latitude,
+                Longitude: serviceRequest.Address.Longitude))
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public Task<ServiceRequestBasePriceDto?> GetBaseServicePriceAsync(
+        Guid serviceRequestId,
+        Guid customerProfileId,
+        CancellationToken cancellationToken = default)
+    {
+        // Ownership is applied inside the query so an un-owned service
+        // request resolves to the same null outcome as a non-existent one,
+        // preventing IDOR/BOLA-style probing. The base price and inspection
+        // fee are resolved from the existing pricing source of truth: the
+        // service request's service category (ServiceCategory.Price and
+        // ServiceCategory.InspectionFee).
+        return _dbContext.ServiceRequests
+            .AsNoTracking()
+            .Where(serviceRequest =>
+                serviceRequest.Id == serviceRequestId
+                && serviceRequest.CustomerProfileId == customerProfileId)
+            .Select(serviceRequest => new ServiceRequestBasePriceDto(
+                ServiceCategoryId: serviceRequest.ServiceCategoryId,
+                ServiceCategoryName: serviceRequest.ServiceCategory.Name,
+                BasePrice: serviceRequest.ServiceCategory.Price,
+                InspectionFee: serviceRequest.ServiceCategory.InspectionFee))
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     public void Update(ServiceRequest serviceRequest)

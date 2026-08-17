@@ -19,4 +19,13 @@ public interface IAssignmentRepository
         Guid serviceRequestId,
         Guid technicianProfileId,
         CancellationToken cancellationToken = default);
+
+    Task<Assignment?> GetAcceptedByRequestAsync(
+        Guid serviceRequestId,
+        CancellationToken cancellationToken = default);
+
+    Task<Assignment?> GetByRequestAndTechnicianAsync(
+        Guid serviceRequestId,
+        Guid technicianProfileId,
+        CancellationToken cancellationToken = default);
 }

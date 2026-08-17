@@ -382,4 +382,26 @@ public Result<Success> RemovePortfolioItem(
 
     return Result.Success;
 }
+
+public Result<Success> UpdateCurrentLocation(
+    decimal latitude,
+    decimal longitude)
+{
+    if (latitude < -90m || latitude > 90m)
+        return TechnicianProfileErrors.LatitudeInvalid;
+
+    if (longitude < -180m || longitude > 180m)
+        return TechnicianProfileErrors.LongitudeInvalid;
+
+    Latitude = latitude;
+    Longitude = longitude;
+
+    AddDomainEvent(
+        new TechnicianLocationUpdatedDomainEvent(
+            Id,
+            latitude,
+            longitude));
+
+    return Result.Success;
+}
 }
